@@ -1,0 +1,18 @@
+category: "Music & Synths"
+order: 4
+products:
+  - name: Eurorack Case
+    desc: Add your case here.
+    ref: true
+    links:
+      DE: https://amzn.to/PLACEHOLDER_DE_CASE
+      US: https://amzn.to/PLACEHOLDER_US_CASE
+      UK: https://amzn.to/PLACEHOLDER_UK_CASE
+
+  - name: Patch Cables
+    desc: Add your cable brand here.
+    ref: true
+    links:
+      DE: https://amzn.to/PLACEHOLDER_DE_CABLES
+      US: https://amzn.to/PLACEHOLDER_US_CABLES
+      UK: https://amzn.to/PLACEHOLDER_UK_CABLES
