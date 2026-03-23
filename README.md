@@ -1,2 +1,2 @@
 # glnnk-static
-Stativ web page delivery
+Static web page delivery
