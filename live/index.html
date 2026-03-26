@@ -375,6 +375,14 @@
       accent-color: var(--accent);
     }
 
+    /* NOTIFICATIONS SECTION (always visible) */
+    .notif-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 24px;
+    }
+
     /* NOTIFICATIONS PERMISSION */
     .notif-prompt {
       margin-top: 16px;
@@ -442,28 +450,6 @@
 
       <div class="actions">
         <a id="watch-btn" href="#" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Watch Stream</a>
-        <button id="notif-btn" class="btn btn-notif">
-          <span id="notif-btn-label">🔔 Enable Notifications</span>
-          <div class="notif-settings">
-            <button class="notif-disable-all" id="notif-disable-all" disabled>disable all</button>
-            <label>
-              <input type="checkbox" id="notif-announced" />
-              <span>Stream announced</span>
-            </label>
-            <label>
-              <input type="checkbox" id="notif-1hour" />
-              <span>1 hour before</span>
-            </label>
-            <label>
-              <input type="checkbox" id="notif-live" />
-              <span>Starting now</span>
-            </label>
-          </div>
-        </button>
-      </div>
-
-      <div id="notif-prompt" class="notif-prompt" style="display: none;">
-        Notifications are saved locally. They'll persist across streams.
       </div>
     </div>
 
@@ -473,6 +459,31 @@
       <h2 class="live-heading">Stream is going on right now!</h2>
       <div class="actions">
         <a id="watch-btn-live" href="#" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Watch on YouTube</a>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS (always visible) -->
+    <div class="notif-section">
+      <button id="notif-btn" class="btn btn-notif">
+        <span id="notif-btn-label">🔔 Enable Notifications</span>
+        <div class="notif-settings">
+          <button class="notif-disable-all" id="notif-disable-all" disabled>disable all</button>
+          <label>
+            <input type="checkbox" id="notif-announced" />
+            <span>Stream announced</span>
+          </label>
+          <label>
+            <input type="checkbox" id="notif-1hour" />
+            <span>1 hour before</span>
+          </label>
+          <label>
+            <input type="checkbox" id="notif-live" />
+            <span>Starting now</span>
+          </label>
+        </div>
+      </button>
+      <div id="notif-prompt" class="notif-prompt" style="display: none;">
+        Notifications are saved locally. They'll persist across streams.
       </div>
     </div>
   </div>
@@ -493,7 +504,10 @@
     // CONFIGURATION & STATE
     // ============================================================
 
-    const CONFIG_URL = 'https://raw.githubusercontent.com/finnglink/glnnk-static/refs/heads/main/live/countdown-data.json';
+    const CONFIG_URLS = [
+      'https://raw.githubusercontent.com/finnglink/glnnk-static/refs/heads/main/live/countdown-data.json',
+      '/live/countdown-data.json'
+    ];
 
     let config = {
       nextStreamTime: null,
@@ -528,15 +542,19 @@
     // ============================================================
 
     async function loadConfig() {
-      try {
-        const response = await fetch(CONFIG_URL + '?t=' + Date.now());
-        if (!response.ok) throw new Error('Config not loaded');
-        config = await response.json();
-        updateDisplay();
-      } catch (error) {
-        console.error('Failed to load config:', error);
-        showState('empty');
+      for (const url of CONFIG_URLS) {
+        try {
+          const response = await fetch(url + '?t=' + Date.now());
+          if (!response.ok) continue;
+          config = await response.json();
+          updateDisplay();
+          return;
+        } catch (e) {
+          continue;
+        }
       }
+      console.error('All config URLs failed');
+      showState('empty');
     }
 
     // ============================================================
