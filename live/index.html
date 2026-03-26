@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stream — Glnnk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0e0e0e;
+      --surface: #161616;
+      --border: #2a2a2a;
+      --text: #e8e4dc;
+      --muted: #666;
+      --accent: #ff72ea;
+      --accent-dim: rgba(255,114,234,0.08);
+      --radius: 6px;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --success: #4ade80;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+    }
+
+    /* STATE: NO STREAM ANNOUNCED */
+    .state-empty {
+      text-align: center;
+      padding: 60px 40px;
+    }
+
+    .state-empty h2 {
+      font-size: 24px;
+      color: var(--muted);
+      margin-bottom: 12px;
+      font-weight: 400;
+    }
+
+    .state-empty p {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* STATE: COUNTDOWN */
+    .state-countdown {
+      text-align: center;
+      padding: 40px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(255,114,234,0.03) 0%, transparent 100%);
+    }
+
+    .stream-topic {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 20px;
+    }
+
+    .stream-topic-text {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .countdown-display {
+      margin: 32px 0;
+    }
+
+    .countdown-time {
+      font-size: clamp(48px, 12vw, 96px);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+      color: var(--accent);
+    }
+
+    .countdown-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 24px;
+    }
+
+    .stream-datetime {
+      font-size: 13px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .timezone-selector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 32px;
+      font-size: 11px;
+    }
+
+    .timezone-display {
+      color: var(--muted);
+    }
+
+    .timezone-edit-btn {
+      background: none;
+      border: none;
+      color: var(--accent);
+      cursor: pointer;
+      padding: 2px 6px;
+      font-size: 12px;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+      font-family: var(--font-mono);
+    }
+
+    .timezone-edit-btn:hover {
+      opacity: 1;
+    }
+
+    .timezone-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .timezone-modal.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .timezone-modal-content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .timezone-modal h3 {
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+
+    .timezone-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+
+    .timezone-btn {
+      padding: 10px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      transition: all 0.15s;
+    }
+
+    .timezone-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .timezone-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+    }
+
+    /* STATE: LIVE NOW */
+    .state-live {
+      text-align: center;
+      padding: 60px 40px;
+      animation: pulse-live 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-live {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+
+    .live-badge {
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 700;
+      color: #000;
+      background: var(--success);
+      padding: 8px 20px;
+      border-radius: var(--radius);
+      margin-bottom: 32px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .live-badge::before {
+      content: '●';
+      margin-right: 8px;
+      animation: pulse-dot 1s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .live-heading {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    /* ACTION BUTTONS */
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: all 0.15s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      background: rgba(255, 114, 234, 0.9);
+    }
+
+    .btn-notif {
+      position: relative;
+    }
+
+    .btn-notif.enabled {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+    }
+
+    .notif-settings {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 100;
+    }
+
+    .btn-notif:hover .notif-settings {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .notif-settings label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .notif-settings label:last-child {
+      margin-bottom: 0;
+    }
+
+    .notif-settings input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+      accent-color: var(--accent);
+    }
+
+    /* NOTIFICATIONS PERMISSION */
+    .notif-prompt {
+      margin-top: 16px;
+      padding: 12px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(255, 114, 234, 0.2);
+      border-radius: var(--radius);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      .state-countdown {
+        padding: 32px 20px;
+      }
+
+      .countdown-time {
+        font-size: clamp(36px, 10vw, 56px);
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .timezone-list {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- NO STREAM ANNOUNCED -->
+    <div id="state-empty" class="state-empty" style="display: none;">
+      <h2>No stream announced</h2>
+      <p>Check back soon or enable notifications to stay updated.</p>
+    </div>
+
+    <!-- COUNTDOWN STATE -->
+    <div id="state-countdown" class="state-countdown" style="display: none;">
+      <div class="stream-topic">
+        <span>Next Stream</span>
+        <span id="topic-value" class="stream-topic-text" style="display: none;"></span>
+      </div>
+
+      <div class="countdown-display">
+        <div class="countdown-time" id="countdown-value">--:--:--</div>
+        <div class="countdown-label">until start</div>
+      </div>
+
+      <div class="stream-datetime" id="stream-datetime">--</div>
+
+      <div class="timezone-selector">
+        <span class="timezone-display">
+          <span id="timezone-display">Loading...</span>
+          <button class="timezone-edit-btn" id="timezone-edit-btn">✎ edit</button>
+        </span>
+      </div>
+
+      <div class="actions">
+        <a id="watch-btn" href="#" class="btn btn-primary">Watch Stream</a>
+        <button id="notif-btn" class="btn btn-notif">
+          <span id="notif-btn-label">🔔 Enable Notifications</span>
+          <div class="notif-settings">
+            <label>
+              <input type="checkbox" id="notif-announced" checked />
+              <span>Stream announced</span>
+            </label>
+            <label>
+              <input type="checkbox" id="notif-1hour" checked />
+              <span>1 hour before</span>
+            </label>
+            <label>
+              <input type="checkbox" id="notif-live" checked />
+              <span>Starting now</span>
+            </label>
+          </div>
+        </button>
+      </div>
+
+      <div id="notif-prompt" class="notif-prompt" style="display: none;">
+        Notifications are saved locally. They'll persist across streams.
+      </div>
+    </div>
+
+    <!-- LIVE STATE -->
+    <div id="state-live" class="state-live" style="display: none;">
+      <div class="live-badge">Now Live</div>
+      <h2 class="live-heading">Stream is going on right now!</h2>
+      <div class="actions">
+        <a id="watch-btn-live" href="#" class="btn btn-primary">Watch on YouTube</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIMEZONE MODAL -->
+  <div id="timezone-modal" class="timezone-modal">
+    <div class="timezone-modal-content">
+      <h3>Select your timezone</h3>
+      <div class="timezone-list" id="timezone-list"></div>
+      <button class="btn btn-primary" style="width: 100%;" onclick="document.getElementById('timezone-modal').classList.remove('active')">
+        Done
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // CONFIGURATION & STATE
+    // ============================================================
+
+    const CONFIG_URL = '/live/countdown-data.json';
+
+    let config = {
+      nextStreamTime: null,
+      streamLink: 'https://m.youtube.com/channel/UCZ2HgIUmKPHZ7VuAlOBPoWw/live',
+      topic: '',
+      isLive: false,
+      liveUntil: null
+    };
+
+    // Notification settings (stored locally, no cookies)
+    const notifDefaults = {
+      announced: true,
+      oneHourBefore: true,
+      liveNow: true
+    };
+
+    let notifSettings = JSON.parse(localStorage.getItem('streamNotifSettings') || JSON.stringify(notifDefaults));
+    let lastNotifiedStreamTime = localStorage.getItem('lastNotifiedStreamTime') || null;
+
+    // Timezone management
+    const TIMEZONES = [
+      'Europe/Berlin', 'Europe/London', 'Europe/Paris',
+      'America/New_York', 'America/Los_Angeles', 'America/Toronto',
+      'Asia/Tokyo', 'Asia/Shanghai', 'Asia/Hong_Kong',
+      'Australia/Sydney', 'Australia/Melbourne'
+    ];
+
+    let userTimezone = localStorage.getItem('userTimezone') || Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    // ============================================================
+    // FETCH CONFIG DATA
+    // ============================================================
+
+    async function loadConfig() {
+      try {
+        const response = await fetch(CONFIG_URL + '?t=' + Date.now());
+        if (!response.ok) throw new Error('Config not loaded');
+        config = await response.json();
+        updateDisplay();
+      } catch (error) {
+        console.error('Failed to load config:', error);
+        showState('empty');
+      }
+    }
+
+    // ============================================================
+    // COUNTDOWN & STATE LOGIC
+    // ============================================================
+
+    function updateDisplay() {
+      const now = new Date();
+      let targetTime = config.nextStreamTime ? new Date(config.nextStreamTime) : null;
+
+      if (config.isLive && config.liveUntil) {
+        const liveEndTime = new Date(config.liveUntil);
+        if (now < liveEndTime) {
+          showState('live');
+          return;
+        } else {
+          config.isLive = false;
+        }
+      }
+
+      if (!targetTime) {
+        showState('empty');
+        return;
+      }
+
+      if (now >= targetTime && now < new Date(targetTime.getTime() + 1.5 * 60 * 60 * 1000)) {
+        if (!config.isLive) {
+          config.isLive = true;
+          config.liveUntil = new Date(targetTime.getTime() + 1.5 * 60 * 60 * 1000).toISOString();
+        }
+        showState('live');
+        return;
+      }
+
+      showState('countdown');
+      updateCountdown(targetTime, now);
+      updateStreamTime(targetTime);
+    }
+
+    function updateCountdown(targetTime, now) {
+      const diff = Math.max(0, targetTime - now);
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      document.getElementById('countdown-value').textContent =
+        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+      document.getElementById('watch-btn').href = config.streamLink;
+    }
+
+    function updateStreamTime(targetTime) {
+      const formatter = new Intl.DateTimeFormat(navigator.language, {
+        timeZone: userTimezone,
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      document.getElementById('stream-datetime').textContent = formatter.format(targetTime);
+    }
+
+    function showState(state) {
+      document.getElementById('state-empty').style.display = state === 'empty' ? 'block' : 'none';
+      document.getElementById('state-countdown').style.display = state === 'countdown' ? 'block' : 'none';
+      document.getElementById('state-live').style.display = state === 'live' ? 'block' : 'none';
+
+      if (state === 'live') {
+        document.getElementById('watch-btn-live').href = config.streamLink;
+      }
+
+      if (state === 'countdown' && config.topic) {
+        document.getElementById('topic-value').style.display = 'inline';
+        document.getElementById('topic-value').textContent = config.topic;
+      } else {
+        document.getElementById('topic-value').style.display = 'none';
+      }
+    }
+
+    // ============================================================
+    // TIMEZONE SELECTOR
+    // ============================================================
+
+    function initializeTimezoneSelector() {
+      const list = document.getElementById('timezone-list');
+      TIMEZONES.forEach(tz => {
+        const btn = document.createElement('button');
+        btn.className = 'timezone-btn' + (tz === userTimezone ? ' active' : '');
+        btn.textContent = tz;
+        btn.onclick = () => {
+          userTimezone = tz;
+          localStorage.setItem('userTimezone', tz);
+          document.querySelectorAll('.timezone-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          updateDisplay();
+          updateTimezoneDisplay();
+        };
+        list.appendChild(btn);
+      });
+
+      document.getElementById('timezone-edit-btn').onclick = () => {
+        document.getElementById('timezone-modal').classList.add('active');
+      };
+
+      document.getElementById('timezone-modal').onclick = (e) => {
+        if (e.target.id === 'timezone-modal') {
+          e.target.classList.remove('active');
+        }
+      };
+
+      updateTimezoneDisplay();
+    }
+
+    function updateTimezoneDisplay() {
+      document.getElementById('timezone-display').textContent = userTimezone;
+    }
+
+    // ============================================================
+    // NOTIFICATIONS
+    // ============================================================
+
+    function initializeNotifications() {
+      const btn = document.getElementById('notif-btn');
+      const announced = document.getElementById('notif-announced');
+      const oneHour = document.getElementById('notif-1hour');
+      const live = document.getElementById('notif-live');
+
+      announced.checked = notifSettings.announced;
+      oneHour.checked = notifSettings.oneHourBefore;
+      live.checked = notifSettings.liveNow;
+
+      announced.onchange = () => {
+        notifSettings.announced = announced.checked;
+        localStorage.setItem('streamNotifSettings', JSON.stringify(notifSettings));
+        updateNotifUI();
+      };
+
+      oneHour.onchange = () => {
+        notifSettings.oneHourBefore = oneHour.checked;
+        localStorage.setItem('streamNotifSettings', JSON.stringify(notifSettings));
+        updateNotifUI();
+      };
+
+      live.onchange = () => {
+        notifSettings.liveNow = live.checked;
+        localStorage.setItem('streamNotifSettings', JSON.stringify(notifSettings));
+        updateNotifUI();
+      };
+
+      btn.onclick = (e) => {
+        // Don't trigger when clicking inside the notif-settings dropdown
+        if (e.target.closest('.notif-settings')) return;
+        if ('Notification' in window && Notification.permission !== 'granted') {
+          Notification.requestPermission().then(() => {
+            updateNotifUI();
+          });
+        }
+      };
+
+      updateNotifUI();
+    }
+
+    function updateNotifUI() {
+      const btn = document.getElementById('notif-btn');
+      const label = document.getElementById('notif-btn-label');
+      const isEnabled = Object.values(notifSettings).some(v => v);
+
+      if (isEnabled && Notification.permission === 'granted') {
+        btn.classList.add('enabled');
+        label.textContent = '🔔 Notifications Enabled';
+      } else if (isEnabled && Notification.permission === 'denied') {
+        label.textContent = '🔔 Notifications Blocked';
+        document.getElementById('notif-prompt').style.display = 'block';
+      } else {
+        btn.classList.remove('enabled');
+        label.textContent = '🔔 Enable Notifications';
+      }
+    }
+
+    function checkAndNotify() {
+      if (!config.nextStreamTime || Notification.permission !== 'granted') return;
+
+      const now = new Date();
+      const streamTime = new Date(config.nextStreamTime);
+      const timeDiff = streamTime - now;
+
+      if (notifSettings.announced && lastNotifiedStreamTime !== config.nextStreamTime) {
+        new Notification('New Stream Announced!', {
+          body: `${config.topic || 'Stream'} coming up`,
+          icon: '🔴'
+        });
+        lastNotifiedStreamTime = config.nextStreamTime;
+        localStorage.setItem('lastNotifiedStreamTime', config.nextStreamTime);
+      }
+
+      if (notifSettings.oneHourBefore && timeDiff > 0 && timeDiff <= 3600 * 1000) {
+        new Notification('Stream Starting Soon!', {
+          body: 'Your stream starts in 1 hour',
+          icon: '⏰'
+        });
+      }
+
+      if (notifSettings.liveNow && config.isLive) {
+        new Notification('Stream is Live Now!', {
+          body: 'Join the stream',
+          icon: '🔴'
+        });
+      }
+    }
+
+    // ============================================================
+    // INITIALIZATION & POLLING
+    // ============================================================
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeTimezoneSelector();
+      initializeNotifications();
+      loadConfig();
+
+      // Poll for config updates every 10 seconds
+      setInterval(loadConfig, 10000);
+
+      // Update countdown every second
+      setInterval(() => {
+        if (config.nextStreamTime) {
+          updateDisplay();
+        }
+      }, 1000);
+
+      // Check notifications periodically
+      setInterval(checkAndNotify, 60000);
+    });
+  </script>
+</body>
+</html>
