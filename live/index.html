@@ -17,7 +17,6 @@
       --accent-dim: rgba(255,114,234,0.08);
       --radius: 6px;
       --font-mono: 'IBM Plex Mono', monospace;
-      --success: #4ade80;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -39,27 +38,8 @@
       max-width: 600px;
     }
 
-    /* STATE: NO STREAM ANNOUNCED */
-    .state-empty {
-      text-align: center;
-      padding: 60px 40px;
-    }
-
-    .state-empty h2 {
-      font-size: 24px;
-      color: var(--muted);
-      margin-bottom: 12px;
-      font-weight: 400;
-    }
-
-    .state-empty p {
-      font-size: 12px;
-      color: var(--muted);
-      letter-spacing: 0.08em;
-    }
-
-    /* STATE: COUNTDOWN */
-    .state-countdown {
+    /* ── STREAM CARD (unified for all states) ─────────────── */
+    .stream-card {
       text-align: center;
       padding: 40px;
       border: 1px solid var(--border);
@@ -67,19 +47,22 @@
       background: linear-gradient(135deg, rgba(255,114,234,0.03) 0%, transparent 100%);
     }
 
-    .stream-topic {
+    /* Meta line: "Next Stream: topic" / topic only / blank space */
+    .stream-meta {
       font-size: 11px;
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.12em;
       margin-bottom: 8px;
+      min-height: 1.4em;
     }
 
-    .stream-topic-text {
+    .stream-meta-topic {
       color: var(--accent);
       font-weight: 700;
     }
 
+    /* Countdown numbers */
     .countdown-display {
       margin: 16px 0;
     }
@@ -87,12 +70,17 @@
     .countdown-time {
       font-size: clamp(48px, 12vw, 96px);
       font-weight: 700;
-      line-height: 1;
+      line-height: 1.1;
       margin-bottom: 16px;
       letter-spacing: -0.02em;
       color: #fff;
+      word-break: break-word;
     }
 
+    .countdown-time.is-empty { color: var(--muted); }
+    .countdown-time.is-live  { color: var(--accent); }
+
+    /* "until start" / "waiting for stream" — hidden but spacing preserved */
     .countdown-label {
       font-size: 12px;
       color: var(--muted);
@@ -101,12 +89,22 @@
       margin-bottom: 24px;
     }
 
-    .stream-datetime {
+    .countdown-label.invisible { visibility: hidden; }
+
+    /* Date/time row */
+    .stream-datetime-wrap {
       font-size: 13px;
       color: var(--text);
       margin-bottom: 8px;
+      min-height: 1.2em;
     }
 
+    .stream-datetime-prefix {
+      color: var(--muted);
+      margin-right: 4px;
+    }
+
+    /* Timezone */
     .timezone-selector {
       display: flex;
       align-items: center;
@@ -116,9 +114,7 @@
       font-size: 11px;
     }
 
-    .timezone-display {
-      color: var(--muted);
-    }
+    .timezone-display { color: var(--muted); }
 
     .timezone-edit-btn {
       background: none;
@@ -132,17 +128,13 @@
       font-family: var(--font-mono);
     }
 
-    .timezone-edit-btn:hover {
-      opacity: 1;
-    }
+    .timezone-edit-btn:hover { opacity: 1; }
 
+    /* Timezone modal */
     .timezone-modal {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.8);
+      inset: 0;
+      background: rgba(0,0,0,0.8);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -152,10 +144,7 @@
       transition: opacity 0.2s;
     }
 
-    .timezone-modal.active {
-      opacity: 1;
-      pointer-events: all;
-    }
+    .timezone-modal.active { opacity: 1; pointer-events: all; }
 
     .timezone-modal-content {
       background: var(--surface);
@@ -166,10 +155,7 @@
       width: 90%;
     }
 
-    .timezone-modal h3 {
-      margin-bottom: 20px;
-      font-size: 16px;
-    }
+    .timezone-modal h3 { margin-bottom: 20px; font-size: 16px; }
 
     .timezone-list {
       display: grid;
@@ -192,64 +178,13 @@
       transition: all 0.15s;
     }
 
-    .timezone-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
+    .timezone-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .timezone-btn.active { background: var(--accent); border-color: var(--accent); color: #000; }
 
-    .timezone-btn.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #000;
-    }
-
-    /* STATE: LIVE NOW */
-    .state-live {
-      text-align: center;
-      padding: 60px 40px;
-      animation: pulse-live 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse-live {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.8; }
-    }
-
-    .live-badge {
-      display: inline-block;
-      font-size: 14px;
-      font-weight: 700;
-      color: #000;
-      background: var(--success);
-      padding: 8px 20px;
-      border-radius: var(--radius);
-      margin-bottom: 32px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-    }
-
-    .live-badge::before {
-      content: '●';
-      margin-right: 8px;
-      animation: pulse-dot 1s ease-in-out infinite;
-    }
-
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    .live-heading {
-      font-size: 32px;
-      font-weight: 700;
-      margin-bottom: 24px;
-    }
-
-    /* ACTION BUTTONS */
+    /* ── BUTTONS ──────────────────────────────────────────── */
     .actions {
       display: flex;
       gap: 12px;
-      margin-top: 32px;
       flex-wrap: wrap;
       justify-content: center;
     }
@@ -273,22 +208,17 @@
       gap: 8px;
     }
 
-    .btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
+    .btn:hover { border-color: var(--accent); color: var(--accent); }
 
-    .btn-primary {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #000;
-    }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #000; }
+    .btn-primary:hover { background: rgba(255,114,234,0.9); color: #000; }
 
-    .btn-primary:hover {
-      background: rgba(255, 114, 234, 0.9);
-    }
-
-    .btn-notif {
+    /* ── NOTIFICATIONS ────────────────────────────────────── */
+    .notif-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 24px;
       position: relative;
     }
 
@@ -297,16 +227,16 @@
       border-color: var(--accent);
     }
 
+    /* Dropdown — sibling of button, shown on .notif-section:hover */
     .notif-settings {
       position: absolute;
-      bottom: 100%;
+      bottom: calc(100% + 8px);
       left: 50%;
       transform: translateX(-50%);
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 12px 16px;
-      margin-bottom: 8px;
       white-space: nowrap;
       opacity: 0;
       pointer-events: none;
@@ -314,7 +244,7 @@
       z-index: 100;
     }
 
-    /* Bridge the gap so moving mouse to dropdown doesn't lose hover */
+    /* Bridge gap between dropdown and button */
     .notif-settings::after {
       content: '';
       position: absolute;
@@ -324,7 +254,7 @@
       height: 12px;
     }
 
-    .btn-notif:hover .notif-settings {
+    .notif-section:hover .notif-settings {
       opacity: 1;
       pointer-events: all;
     }
@@ -334,10 +264,8 @@
       width: 100%;
       margin-bottom: 10px;
       padding-bottom: 10px;
+      border: none;
       border-bottom: 1px solid var(--border);
-      border-top: none;
-      border-left: none;
-      border-right: none;
       font-size: 11px;
       color: var(--muted);
       cursor: pointer;
@@ -346,14 +274,8 @@
       font-family: var(--font-mono);
     }
 
-    .notif-disable-all:not(:disabled):hover {
-      color: var(--text);
-    }
-
-    .notif-disable-all:disabled {
-      opacity: 0.3;
-      cursor: default;
-    }
+    .notif-disable-all:not(:disabled):hover { color: var(--text); }
+    .notif-disable-all:disabled { opacity: 0.3; cursor: default; }
 
     .notif-settings label {
       display: flex;
@@ -364,9 +286,7 @@
       cursor: pointer;
     }
 
-    .notif-settings label:last-child {
-      margin-bottom: 0;
-    }
+    .notif-settings label:last-of-type { margin-bottom: 0; }
 
     .notif-settings input[type="checkbox"] {
       width: 14px;
@@ -375,71 +295,43 @@
       accent-color: var(--accent);
     }
 
-    /* NOTIFICATIONS SECTION (always visible) */
-    .notif-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 24px;
-    }
-
-    /* NOTIFICATIONS PERMISSION */
     .notif-prompt {
-      margin-top: 16px;
-      padding: 12px;
+      margin-top: 12px;
+      padding: 10px 12px;
       background: var(--accent-dim);
-      border: 1px solid rgba(255, 114, 234, 0.2);
+      border: 1px solid rgba(255,114,234,0.2);
       border-radius: var(--radius);
       font-size: 11px;
       color: var(--muted);
+      text-align: center;
     }
 
-    /* RESPONSIVE */
+    /* ── RESPONSIVE ───────────────────────────────────────── */
     @media (max-width: 600px) {
-      .state-countdown {
-        padding: 32px 20px;
-      }
-
-      .countdown-time {
-        font-size: clamp(36px, 10vw, 56px);
-      }
-
-      .actions {
-        flex-direction: column;
-      }
-
-      .btn {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .timezone-list {
-        grid-template-columns: 1fr;
-      }
+      .stream-card { padding: 32px 20px; }
+      .countdown-time { font-size: clamp(32px, 9vw, 56px); }
+      .actions { flex-direction: column; }
+      .btn { width: 100%; justify-content: center; }
+      .timezone-list { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- NO STREAM ANNOUNCED -->
-    <div id="state-empty" class="state-empty">
-      <h2>No stream announced</h2>
-      <p>Check back soon or enable notifications to stay updated.</p>
-    </div>
 
-    <!-- COUNTDOWN STATE -->
-    <div id="state-countdown" class="state-countdown" style="display: none;">
-      <div class="stream-topic">
-        <span>Next Stream:</span>
-        <span id="topic-value" class="stream-topic-text" style="display: none;"></span>
-      </div>
+    <!-- STREAM CARD — unified layout for all states -->
+    <div class="stream-card">
+      <div class="stream-meta" id="stream-meta"></div>
 
       <div class="countdown-display">
         <div class="countdown-time" id="countdown-value">--:--:--</div>
-        <div class="countdown-label">until start</div>
+        <div class="countdown-label" id="countdown-label">until start</div>
       </div>
 
-      <div class="stream-datetime" id="stream-datetime">--</div>
+      <div class="stream-datetime-wrap">
+        <span class="stream-datetime-prefix" id="datetime-prefix"></span
+        ><span id="stream-datetime"></span>
+      </div>
 
       <div class="timezone-selector">
         <span class="timezone-display">
@@ -449,43 +341,27 @@
       </div>
 
       <div class="actions">
-        <a id="watch-btn" href="#" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Watch Stream</a>
+        <a id="watch-btn" href="#" class="btn btn-primary"
+           target="_blank" rel="noopener noreferrer">Watch Stream</a>
       </div>
     </div>
 
-    <!-- LIVE STATE -->
-    <div id="state-live" class="state-live" style="display: none;">
-      <div class="live-badge">Now Live</div>
-      <h2 class="live-heading">Stream is going on right now!</h2>
-      <div class="actions">
-        <a id="watch-btn-live" href="#" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Watch on YouTube</a>
-      </div>
-    </div>
-
-    <!-- NOTIFICATIONS (always visible) -->
+    <!-- NOTIFICATIONS — always visible, outside card -->
     <div class="notif-section">
       <button id="notif-btn" class="btn btn-notif">
         <span id="notif-btn-label">🔔 Enable Notifications</span>
-        <div class="notif-settings">
-          <button class="notif-disable-all" id="notif-disable-all" disabled>disable all</button>
-          <label>
-            <input type="checkbox" id="notif-announced" />
-            <span>Stream announced</span>
-          </label>
-          <label>
-            <input type="checkbox" id="notif-1hour" />
-            <span>1 hour before</span>
-          </label>
-          <label>
-            <input type="checkbox" id="notif-live" />
-            <span>Starting now</span>
-          </label>
-        </div>
       </button>
-      <div id="notif-prompt" class="notif-prompt" style="display: none;">
-        Notifications are saved locally. They'll persist across streams.
+      <div class="notif-settings">
+        <button class="notif-disable-all" id="notif-disable-all" disabled>disable all</button>
+        <label><input type="checkbox" id="notif-announced" /><span>Stream announced</span></label>
+        <label><input type="checkbox" id="notif-1hour" /><span>1 hour before</span></label>
+        <label><input type="checkbox" id="notif-live" /><span>Starting now</span></label>
+      </div>
+      <div id="notif-prompt" class="notif-prompt" style="display:none;">
+        Notifications are saved locally and persist across streams.
       </div>
     </div>
+
   </div>
 
   <!-- TIMEZONE MODAL -->
@@ -493,7 +369,8 @@
     <div class="timezone-modal-content">
       <h3>Select your timezone</h3>
       <div class="timezone-list" id="timezone-list"></div>
-      <button class="btn btn-primary" style="width: 100%;" onclick="document.getElementById('timezone-modal').classList.remove('active')">
+      <button class="btn btn-primary" style="width:100%;"
+              onclick="document.getElementById('timezone-modal').classList.remove('active')">
         Done
       </button>
     </div>
@@ -501,13 +378,15 @@
 
   <script>
     // ============================================================
-    // CONFIGURATION & STATE
+    // CONFIG
     // ============================================================
 
     const CONFIG_URLS = [
       'https://raw.githubusercontent.com/finnglink/glnnk-static/refs/heads/main/live/countdown-data.json',
       '/live/countdown-data.json'
     ];
+
+    const YT_API_KEY = 'AIzaSyBtEyuTqvTlUSc1RnKRE9aGtGMh3cwples';
 
     let config = {
       nextStreamTime: null,
@@ -517,130 +396,301 @@
       liveUntil: null
     };
 
-    // Notification settings (stored locally, no cookies)
-    const notifDefaults = {
-      announced: false,
-      oneHourBefore: false,
-      liveNow: false
-    };
+    // ── YouTube live detection state ──
+    let liveVideoId = null;
+    let ytSearchTimer = null;
+    let ytPollTimer  = null;
 
-    let notifSettings = JSON.parse(localStorage.getItem('streamNotifSettings') || JSON.stringify(notifDefaults));
-    let lastNotifiedStreamTime = localStorage.getItem('lastNotifiedStreamTime') || null;
+    // ── Notification settings ──
+    const notifDefaults = { announced: false, oneHourBefore: false, liveNow: false };
+    let notifSettings = JSON.parse(
+      localStorage.getItem('streamNotifSettings') || JSON.stringify(notifDefaults)
+    );
+    let lastAnnouncedStreamTime  = localStorage.getItem('lastAnnouncedStreamTime')  || null;
+    let lastOneHourStreamTime    = localStorage.getItem('lastOneHourStreamTime')    || null;
+    let lastLiveNotifVideoId     = localStorage.getItem('lastLiveNotifVideoId')     || null;
 
-    // Timezone management
+    // ── Timezone ──
     const TIMEZONES = [
       'Europe/Berlin', 'Europe/London', 'Europe/Paris',
       'America/New_York', 'America/Los_Angeles', 'America/Toronto',
       'Asia/Tokyo', 'Asia/Shanghai', 'Asia/Hong_Kong',
       'Australia/Sydney', 'Australia/Melbourne'
     ];
+    let userTimezone = localStorage.getItem('userTimezone')
+      || Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    let userTimezone = localStorage.getItem('userTimezone') || Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // ── Last known stream time (for empty state "Last stream:") ──
+    let lastStreamTime = localStorage.getItem('lastStreamTime') || null;
 
     // ============================================================
-    // FETCH CONFIG DATA
+    // FETCH CONFIG
     // ============================================================
 
     async function loadConfig() {
       for (const url of CONFIG_URLS) {
         try {
-          const response = await fetch(url + '?t=' + Date.now());
-          if (!response.ok) continue;
-          config = await response.json();
-          updateDisplay();
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) continue;
+          config = await res.json();
+          onConfigLoaded();
           return;
-        } catch (e) {
-          continue;
-        }
+        } catch (e) { continue; }
       }
       console.error('All config URLs failed');
-      showState('empty');
+      renderState('empty');
+    }
+
+    function onConfigLoaded() {
+      if (config.nextStreamTime) {
+        lastStreamTime = config.nextStreamTime;
+        localStorage.setItem('lastStreamTime', config.nextStreamTime);
+      }
+      manageYouTubePolling();
+      updateDisplay();
     }
 
     // ============================================================
-    // COUNTDOWN & STATE LOGIC
+    // YOUTUBE LIVE DETECTION
+    // ============================================================
+
+    function getChannelId() {
+      const m = (config.streamLink || '').match(/youtube\.com\/channel\/([A-Za-z0-9_-]+)/);
+      return m ? m[1] : null;
+    }
+
+    async function searchForLive() {
+      const channelId = getChannelId();
+      if (!channelId || !YT_API_KEY) return;
+      try {
+        const url = `https://www.googleapis.com/youtube/v3/search`
+          + `?part=id&channelId=${channelId}&eventType=live&type=video&key=${YT_API_KEY}`;
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (data.items && data.items.length > 0) {
+          const videoId = data.items[0].id.videoId;
+          if (videoId && videoId !== liveVideoId) {
+            liveVideoId = videoId;
+            onStreamWentLive(videoId);
+          }
+        } else if (liveVideoId) {
+          // Was live but now no results — confirm with videos.list before clearing
+        }
+      } catch (e) { console.error('YT search error:', e); }
+    }
+
+    async function pollLiveStatus() {
+      if (!liveVideoId || !YT_API_KEY) return;
+      try {
+        const url = `https://www.googleapis.com/youtube/v3/videos`
+          + `?part=liveStreamingDetails&id=${liveVideoId}&key=${YT_API_KEY}`;
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (!data.items || data.items.length === 0) {
+          onStreamEnded(); return;
+        }
+        const details = data.items[0].liveStreamingDetails;
+        if (details && details.actualEndTime) {
+          onStreamEnded();
+        }
+      } catch (e) { console.error('YT poll error:', e); }
+    }
+
+    function onStreamWentLive(videoId) {
+      // Switch from expensive search to cheap poll
+      clearInterval(ytSearchTimer); ytSearchTimer = null;
+      clearInterval(ytPollTimer);
+      ytPollTimer = setInterval(pollLiveStatus, 30000);
+
+      renderState('live');
+
+      // Fire live notification once per video
+      if (notifSettings.liveNow
+          && 'Notification' in window
+          && Notification.permission === 'granted'
+          && lastLiveNotifVideoId !== videoId) {
+        new Notification('Stream is Live Now!', {
+          body: config.topic || 'Glnnk is live — join the stream!'
+        });
+        lastLiveNotifVideoId = videoId;
+        localStorage.setItem('lastLiveNotifVideoId', videoId);
+      }
+    }
+
+    function onStreamEnded() {
+      liveVideoId = null;
+      clearInterval(ytPollTimer); ytPollTimer = null;
+      config.isLive = false;
+      config.nextStreamTime = null;
+      config.topic = '';
+      renderState('empty');
+    }
+
+    function manageYouTubePolling() {
+      if (!YT_API_KEY || liveVideoId) return; // already in poll mode
+
+      const now = new Date();
+      const streamTime = config.nextStreamTime ? new Date(config.nextStreamTime) : null;
+      const diffMs = streamTime ? (streamTime - now) : null;
+
+      // Near stream time: ±1 hour → check every 3 min (100 units × 40 calls = 4,000 units/window)
+      // No stream scheduled: check every 15 min (100 units × 96 calls = 9,600 units/day)
+      const inWindow = diffMs !== null && Math.abs(diffMs) < 60 * 60 * 1000;
+      const interval = inWindow ? 3 * 60 * 1000 : 15 * 60 * 1000;
+
+      if (ytSearchTimer) { clearInterval(ytSearchTimer); ytSearchTimer = null; }
+      ytSearchTimer = setInterval(searchForLive, interval);
+      searchForLive(); // immediate check
+    }
+
+    // ============================================================
+    // DISPLAY
     // ============================================================
 
     function updateDisplay() {
+      // YouTube API takes precedence
+      if (liveVideoId) { renderState('live'); return; }
+
       const now = new Date();
-      let targetTime = config.nextStreamTime ? new Date(config.nextStreamTime) : null;
+      const streamTime = config.nextStreamTime ? new Date(config.nextStreamTime) : null;
 
+      // Manual isLive fallback (no API key or API not yet triggered)
       if (config.isLive && config.liveUntil) {
-        const liveEndTime = new Date(config.liveUntil);
-        if (now < liveEndTime) {
-          showState('live');
-          return;
+        if (now < new Date(config.liveUntil)) { renderState('live'); return; }
+        else { config.isLive = false; }
+      }
+
+      if (!streamTime) { renderState('empty'); return; }
+
+      // Countdown (positive or negative — no auto-live transition, API handles that)
+      renderState('countdown');
+    }
+
+    function renderState(state) {
+      const timerEl   = document.getElementById('countdown-value');
+      const labelEl   = document.getElementById('countdown-label');
+      const metaEl    = document.getElementById('stream-meta');
+      const prefixEl  = document.getElementById('datetime-prefix');
+      const dtEl      = document.getElementById('stream-datetime');
+      const watchBtn  = document.getElementById('watch-btn');
+
+      watchBtn.href = config.streamLink;
+
+      if (state === 'empty') {
+        metaEl.innerHTML = '&nbsp;';
+        timerEl.textContent = 'No planned stream';
+        timerEl.className = 'countdown-time is-empty';
+        labelEl.textContent = 'until start';
+        labelEl.className = 'countdown-label invisible';
+
+        if (lastStreamTime) {
+          prefixEl.textContent = 'Last stream:';
+          dtEl.textContent = ' ' + formatTime(new Date(lastStreamTime));
         } else {
-          config.isLive = false;
+          prefixEl.textContent = '';
+          dtEl.textContent = '';
         }
-      }
+        watchBtn.textContent = 'Visit Channel';
 
-      if (!targetTime) {
-        showState('empty');
-        return;
-      }
+      } else if (state === 'countdown') {
+        const streamTime = new Date(config.nextStreamTime);
+        const now = new Date();
+        const diff = streamTime - now;
 
-      if (now >= targetTime && now < new Date(targetTime.getTime() + 1.5 * 60 * 60 * 1000)) {
-        if (!config.isLive) {
-          config.isLive = true;
-          config.liveUntil = new Date(targetTime.getTime() + 1.5 * 60 * 60 * 1000).toISOString();
+        // Meta
+        setMeta(metaEl, 'Next Stream:', config.topic);
+
+        // Timer (updated every second by interval)
+        timerEl.className = 'countdown-time';
+        updateTimer(streamTime);
+
+        // Label
+        labelEl.className = 'countdown-label';
+        labelEl.textContent = diff < 0 ? 'waiting for stream' : 'until start';
+
+        // Datetime
+        prefixEl.textContent = '';
+        dtEl.textContent = formatTime(streamTime);
+
+        watchBtn.textContent = 'Watch Stream';
+
+      } else if (state === 'live') {
+        // Meta: topic only, accent, no label
+        if (config.topic) {
+          metaEl.textContent = '';
+          const span = document.createElement('span');
+          span.className = 'stream-meta-topic';
+          span.textContent = config.topic;
+          metaEl.appendChild(span);
+        } else {
+          metaEl.innerHTML = '&nbsp;';
         }
-        showState('live');
-        return;
+
+        timerEl.textContent = 'Streaming Now';
+        timerEl.className = 'countdown-time is-live';
+        labelEl.textContent = 'until start';
+        labelEl.className = 'countdown-label invisible';
+
+        // Datetime
+        prefixEl.textContent = '';
+        dtEl.textContent = config.nextStreamTime ? formatTime(new Date(config.nextStreamTime)) : '';
+
+        watchBtn.textContent = 'Watch Stream';
       }
-
-      showState('countdown');
-      updateCountdown(targetTime, now);
-      updateStreamTime(targetTime);
     }
 
-    function updateCountdown(targetTime, now) {
-      const diff = Math.max(0, targetTime - now);
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-      document.getElementById('countdown-value').textContent =
-        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-      document.getElementById('watch-btn').href = config.streamLink;
-    }
-
-    function updateStreamTime(targetTime) {
-      const formatter = new Intl.DateTimeFormat(navigator.language, {
-        timeZone: userTimezone,
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-      document.getElementById('stream-datetime').textContent = formatter.format(targetTime);
-    }
-
-    function showState(state) {
-      document.getElementById('state-empty').style.display = state === 'empty' ? 'block' : 'none';
-      document.getElementById('state-countdown').style.display = state === 'countdown' ? 'block' : 'none';
-      document.getElementById('state-live').style.display = state === 'live' ? 'block' : 'none';
-
-      if (state === 'live') {
-        document.getElementById('watch-btn-live').href = config.streamLink;
+    function setMeta(el, label, topic) {
+      el.textContent = '';
+      const labelSpan = document.createTextNode(label);
+      el.appendChild(labelSpan);
+      if (topic) {
+        el.appendChild(document.createTextNode(' '));
+        const topicSpan = document.createElement('span');
+        topicSpan.className = 'stream-meta-topic';
+        topicSpan.textContent = topic;
+        el.appendChild(topicSpan);
       }
+    }
 
-      if (state === 'countdown' && config.topic) {
-        document.getElementById('topic-value').style.display = 'inline';
-        document.getElementById('topic-value').textContent = config.topic;
+    function updateTimer(streamTime) {
+      const timerEl = document.getElementById('countdown-value');
+      const labelEl = document.getElementById('countdown-label');
+      if (!timerEl || timerEl.className !== 'countdown-time') return;
+
+      const diff = streamTime - new Date();
+      const abs  = Math.abs(diff);
+      const h = Math.floor(abs / 3600000);
+      const m = Math.floor((abs % 3600000) / 60000);
+      const s = Math.floor((abs % 60000) / 1000);
+      const sign = diff < 0 ? '-' : '';
+
+      timerEl.textContent =
+        `${sign}${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+
+      if (diff < 0) {
+        labelEl.textContent = 'waiting for stream';
       } else {
-        document.getElementById('topic-value').style.display = 'none';
+        labelEl.textContent = 'until start';
       }
+    }
+
+    function formatTime(date) {
+      return new Intl.DateTimeFormat(navigator.language, {
+        timeZone: userTimezone,
+        weekday: 'long', year: 'numeric', month: 'long',
+        day: 'numeric', hour: '2-digit', minute: '2-digit'
+      }).format(date);
     }
 
     // ============================================================
     // TIMEZONE SELECTOR
     // ============================================================
 
-    function initializeTimezoneSelector() {
+    function initTimezone() {
       const list = document.getElementById('timezone-list');
       TIMEZONES.forEach(tz => {
         const btn = document.createElement('button');
@@ -649,28 +699,22 @@
         btn.onclick = () => {
           userTimezone = tz;
           localStorage.setItem('userTimezone', tz);
-          document.querySelectorAll('.timezone-btn').forEach(b => b.classList.remove('active'));
+          list.querySelectorAll('.timezone-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
-          updateDisplay();
-          updateTimezoneDisplay();
+          loadConfig();
+          document.getElementById('timezone-display').textContent = tz;
         };
         list.appendChild(btn);
       });
 
-      document.getElementById('timezone-edit-btn').onclick = () => {
+      document.getElementById('timezone-edit-btn').onclick = () =>
         document.getElementById('timezone-modal').classList.add('active');
-      };
 
-      document.getElementById('timezone-modal').onclick = (e) => {
-        if (e.target.id === 'timezone-modal') {
+      document.getElementById('timezone-modal').onclick = e => {
+        if (e.target.id === 'timezone-modal')
           e.target.classList.remove('active');
-        }
       };
 
-      updateTimezoneDisplay();
-    }
-
-    function updateTimezoneDisplay() {
       document.getElementById('timezone-display').textContent = userTimezone;
     }
 
@@ -678,77 +722,64 @@
     // NOTIFICATIONS
     // ============================================================
 
-    function initializeNotifications() {
-      const btn = document.getElementById('notif-btn');
+    function initNotifications() {
+      const btn      = document.getElementById('notif-btn');
       const announced = document.getElementById('notif-announced');
-      const oneHour = document.getElementById('notif-1hour');
-      const live = document.getElementById('notif-live');
+      const oneHour  = document.getElementById('notif-1hour');
+      const live     = document.getElementById('notif-live');
 
       announced.checked = notifSettings.announced;
-      oneHour.checked = notifSettings.oneHourBefore;
-      live.checked = notifSettings.liveNow;
+      oneHour.checked   = notifSettings.oneHourBefore;
+      live.checked      = notifSettings.liveNow;
 
-      announced.onchange = () => {
-        notifSettings.announced = announced.checked;
+      const persist = () => {
         localStorage.setItem('streamNotifSettings', JSON.stringify(notifSettings));
         updateNotifUI();
       };
 
-      oneHour.onchange = () => {
-        notifSettings.oneHourBefore = oneHour.checked;
-        localStorage.setItem('streamNotifSettings', JSON.stringify(notifSettings));
-        updateNotifUI();
-      };
+      announced.onchange = () => { notifSettings.announced      = announced.checked; persist(); };
+      oneHour.onchange   = () => { notifSettings.oneHourBefore  = oneHour.checked;   persist(); };
+      live.onchange      = () => { notifSettings.liveNow        = live.checked;       persist(); };
 
-      live.onchange = () => {
-        notifSettings.liveNow = live.checked;
-        localStorage.setItem('streamNotifSettings', JSON.stringify(notifSettings));
-        updateNotifUI();
-      };
-
-      // Clicking the button label enables all three
-      btn.onclick = (e) => {
-        if (e.target.closest('.notif-settings')) return;
-        notifSettings.announced = true;
+      // Click the button = enable all + request permission
+      btn.onclick = () => {
+        notifSettings.announced     = true;
         notifSettings.oneHourBefore = true;
-        notifSettings.liveNow = true;
-        announced.checked = true;
-        oneHour.checked = true;
-        live.checked = true;
-        localStorage.setItem('streamNotifSettings', JSON.stringify(notifSettings));
+        notifSettings.liveNow       = true;
+        announced.checked = oneHour.checked = live.checked = true;
         if ('Notification' in window && Notification.permission !== 'granted') {
-          Notification.requestPermission().then(() => updateNotifUI());
+          Notification.requestPermission().then(() => persist());
+        } else {
+          persist();
         }
-        updateNotifUI();
       };
 
-      document.getElementById('notif-disable-all').onclick = (e) => {
+      document.getElementById('notif-disable-all').onclick = e => {
         e.stopPropagation();
-        notifSettings.announced = false;
-        notifSettings.oneHourBefore = false;
-        notifSettings.liveNow = false;
-        announced.checked = false;
-        oneHour.checked = false;
-        live.checked = false;
-        localStorage.setItem('streamNotifSettings', JSON.stringify(notifSettings));
-        updateNotifUI();
+        notifSettings.announced = notifSettings.oneHourBefore = notifSettings.liveNow = false;
+        announced.checked = oneHour.checked = live.checked = false;
+        persist();
       };
 
       updateNotifUI();
     }
 
     function updateNotifUI() {
-      const btn = document.getElementById('notif-btn');
-      const label = document.getElementById('notif-btn-label');
-      const disableAllBtn = document.getElementById('notif-disable-all');
-      const isEnabled = Object.values(notifSettings).some(v => v);
+      const btn      = document.getElementById('notif-btn');
+      const label    = document.getElementById('notif-btn-label');
+      const disableBtn = document.getElementById('notif-disable-all');
+      const anyOn    = Object.values(notifSettings).some(Boolean);
 
-      disableAllBtn.disabled = !isEnabled;
+      disableBtn.disabled = !anyOn;
 
-      if (isEnabled && Notification.permission === 'granted') {
+      const granted = 'Notification' in window && Notification.permission === 'granted';
+      const denied  = 'Notification' in window && Notification.permission === 'denied';
+
+      if (anyOn && granted) {
         btn.classList.add('enabled');
         label.textContent = '🔔 Notifications Enabled';
-      } else if (isEnabled && Notification.permission === 'denied') {
+      } else if (denied) {
+        btn.classList.remove('enabled');
         label.textContent = '🔔 Notifications Blocked';
         document.getElementById('notif-prompt').style.display = 'block';
       } else {
@@ -758,57 +789,56 @@
     }
 
     function checkAndNotify() {
-      if (!config.nextStreamTime || Notification.permission !== 'granted') return;
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
 
-      const now = new Date();
-      const streamTime = new Date(config.nextStreamTime);
-      const timeDiff = streamTime - now;
+      const streamTime = config.nextStreamTime ? new Date(config.nextStreamTime) : null;
+      const diff = streamTime ? (streamTime - new Date()) : null;
 
-      if (notifSettings.announced && lastNotifiedStreamTime !== config.nextStreamTime) {
+      // Stream announced — once per nextStreamTime
+      if (notifSettings.announced && streamTime
+          && lastAnnouncedStreamTime !== config.nextStreamTime) {
         new Notification('New Stream Announced!', {
-          body: `${config.topic || 'Stream'} coming up`,
-          icon: '🔴'
+          body: config.topic ? `"${config.topic}" coming up` : 'Stream coming up'
         });
-        lastNotifiedStreamTime = config.nextStreamTime;
-        localStorage.setItem('lastNotifiedStreamTime', config.nextStreamTime);
+        lastAnnouncedStreamTime = config.nextStreamTime;
+        localStorage.setItem('lastAnnouncedStreamTime', config.nextStreamTime);
       }
 
-      if (notifSettings.oneHourBefore && timeDiff > 0 && timeDiff <= 3600 * 1000) {
+      // 1 hour before — once per nextStreamTime
+      if (notifSettings.oneHourBefore && diff !== null
+          && diff > 0 && diff <= 3600000
+          && lastOneHourStreamTime !== config.nextStreamTime) {
         new Notification('Stream Starting Soon!', {
-          body: 'Your stream starts in 1 hour',
-          icon: '⏰'
+          body: 'Starts in 1 hour'
         });
+        lastOneHourStreamTime = config.nextStreamTime;
+        localStorage.setItem('lastOneHourStreamTime', config.nextStreamTime);
       }
 
-      if (notifSettings.liveNow && config.isLive) {
-        new Notification('Stream is Live Now!', {
-          body: 'Join the stream',
-          icon: '🔴'
-        });
-      }
+      // Live notification is fired by onStreamWentLive(), not here
     }
 
     // ============================================================
-    // INITIALIZATION & POLLING
+    // INIT
     // ============================================================
 
     document.addEventListener('DOMContentLoaded', () => {
-      initializeTimezoneSelector();
-      initializeNotifications();
+      initTimezone();
+      initNotifications();
       loadConfig();
 
-      // Poll for config updates every 10 seconds
+      // Reload config every 10s
       setInterval(loadConfig, 10000);
 
-      // Update countdown every second
+      // Tick countdown every second
       setInterval(() => {
-        if (config.nextStreamTime) {
-          updateDisplay();
+        if (config.nextStreamTime && !liveVideoId && !config.isLive) {
+          updateTimer(new Date(config.nextStreamTime));
         }
       }, 1000);
 
-      // Check notifications periodically
-      setInterval(checkAndNotify, 60000);
+      // Check notifications every 15s
+      setInterval(checkAndNotify, 15000);
     });
   </script>
 </body>
