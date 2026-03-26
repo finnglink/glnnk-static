@@ -72,7 +72,7 @@
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      margin-bottom: 20px;
+      margin-bottom: 8px;
     }
 
     .stream-topic-text {
@@ -81,7 +81,7 @@
     }
 
     .countdown-display {
-      margin: 32px 0;
+      margin: 16px 0;
     }
 
     .countdown-time {
@@ -90,7 +90,7 @@
       line-height: 1;
       margin-bottom: 16px;
       letter-spacing: -0.02em;
-      color: var(--accent);
+      color: #fff;
     }
 
     .countdown-label {
@@ -314,7 +314,7 @@
       z-index: 100;
     }
 
-    .btn-notif:hover .notif-settings {
+    .btn-notif.open .notif-settings {
       opacity: 1;
       pointer-events: all;
     }
@@ -330,6 +330,27 @@
 
     .notif-settings label:last-child {
       margin-bottom: 0;
+    }
+
+    .notif-disable-all {
+      display: block;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      cursor: pointer;
+      text-align: center;
+      background: none;
+      border-left: none;
+      border-right: none;
+      border-bottom: none;
+      font-family: var(--font-mono);
+      width: 100%;
+    }
+
+    .notif-disable-all:hover {
+      color: var(--text);
     }
 
     .notif-settings input[type="checkbox"] {
@@ -378,7 +399,7 @@
 <body>
   <div class="container">
     <!-- NO STREAM ANNOUNCED -->
-    <div id="state-empty" class="state-empty" style="display: none;">
+    <div id="state-empty" class="state-empty">
       <h2>No stream announced</h2>
       <p>Check back soon or enable notifications to stay updated.</p>
     </div>
@@ -386,7 +407,7 @@
     <!-- COUNTDOWN STATE -->
     <div id="state-countdown" class="state-countdown" style="display: none;">
       <div class="stream-topic">
-        <span>Next Stream</span>
+        <span>Next Stream:</span>
         <span id="topic-value" class="stream-topic-text" style="display: none;"></span>
       </div>
 
@@ -400,12 +421,12 @@
       <div class="timezone-selector">
         <span class="timezone-display">
           <span id="timezone-display">Loading...</span>
-          <button class="timezone-edit-btn" id="timezone-edit-btn">✎ edit</button>
+          <button class="timezone-edit-btn" id="timezone-edit-btn">✎ change timezone</button>
         </span>
       </div>
 
       <div class="actions">
-        <a id="watch-btn" href="#" class="btn btn-primary">Watch Stream</a>
+        <a id="watch-btn" href="#" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Watch Stream</a>
         <button id="notif-btn" class="btn btn-notif">
           <span id="notif-btn-label">🔔 Enable Notifications</span>
           <div class="notif-settings">
@@ -421,6 +442,7 @@
               <input type="checkbox" id="notif-live" checked />
               <span>Starting now</span>
             </label>
+            <button class="notif-disable-all" id="notif-disable-all">disable all</button>
           </div>
         </button>
       </div>
@@ -435,7 +457,7 @@
       <div class="live-badge">Now Live</div>
       <h2 class="live-heading">Stream is going on right now!</h2>
       <div class="actions">
-        <a id="watch-btn-live" href="#" class="btn btn-primary">Watch on YouTube</a>
+        <a id="watch-btn-live" href="#" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Watch on YouTube</a>
       </div>
     </div>
   </div>
@@ -456,11 +478,11 @@
     // CONFIGURATION & STATE
     // ============================================================
 
-    const CONFIG_URL = '/live/countdown-data.json';
+    const CONFIG_URL = 'https://raw.githubusercontent.com/finnglink/glnnk-static/refs/heads/master/live/countdown-data.json';
 
     let config = {
       nextStreamTime: null,
-      streamLink: 'https://m.youtube.com/channel/UCZ2HgIUmKPHZ7VuAlOBPoWw/live',
+      streamLink: 'https://www.youtube.com/channel/UCZ2HgIUmKPHZ7VuAlOBPoWw/live',
       topic: '',
       isLive: false,
       liveUntil: null
@@ -652,13 +674,32 @@
       };
 
       btn.onclick = (e) => {
-        // Don't trigger when clicking inside the notif-settings dropdown
         if (e.target.closest('.notif-settings')) return;
         if ('Notification' in window && Notification.permission !== 'granted') {
           Notification.requestPermission().then(() => {
             updateNotifUI();
+            btn.classList.toggle('open');
           });
+        } else {
+          btn.classList.toggle('open');
         }
+      };
+
+      document.addEventListener('click', (e) => {
+        if (!btn.contains(e.target)) btn.classList.remove('open');
+      });
+
+      document.getElementById('notif-disable-all').onclick = (e) => {
+        e.stopPropagation();
+        notifSettings.announced = false;
+        notifSettings.oneHourBefore = false;
+        notifSettings.liveNow = false;
+        announced.checked = false;
+        oneHour.checked = false;
+        live.checked = false;
+        localStorage.setItem('streamNotifSettings', JSON.stringify(notifSettings));
+        btn.classList.remove('open');
+        updateNotifUI();
       };
 
       updateNotifUI();
