@@ -306,7 +306,7 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 12px 16px;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       white-space: nowrap;
       opacity: 0;
       pointer-events: none;
@@ -314,9 +314,45 @@
       z-index: 100;
     }
 
-    .btn-notif.open .notif-settings {
+    /* Bridge the gap so moving mouse to dropdown doesn't lose hover */
+    .notif-settings::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      height: 12px;
+    }
+
+    .btn-notif:hover .notif-settings {
       opacity: 1;
       pointer-events: all;
+    }
+
+    .notif-disable-all {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      font-size: 11px;
+      color: var(--muted);
+      cursor: pointer;
+      text-align: center;
+      background: none;
+      font-family: var(--font-mono);
+    }
+
+    .notif-disable-all:not(:disabled):hover {
+      color: var(--text);
+    }
+
+    .notif-disable-all:disabled {
+      opacity: 0.3;
+      cursor: default;
     }
 
     .notif-settings label {
@@ -332,32 +368,19 @@
       margin-bottom: 0;
     }
 
-    .notif-disable-all {
-      display: block;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid var(--border);
-      font-size: 11px;
-      color: var(--muted);
-      cursor: pointer;
-      text-align: center;
-      background: none;
-      border-left: none;
-      border-right: none;
-      border-bottom: none;
-      font-family: var(--font-mono);
-      width: 100%;
-    }
-
-    .notif-disable-all:hover {
-      color: var(--text);
-    }
-
     .notif-settings input[type="checkbox"] {
       width: 14px;
       height: 14px;
       cursor: pointer;
       accent-color: var(--accent);
+    }
+
+    /* NOTIFICATIONS SECTION (always visible) */
+    .notif-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 24px;
     }
 
     /* NOTIFICATIONS PERMISSION */
@@ -427,28 +450,6 @@
 
       <div class="actions">
         <a id="watch-btn" href="#" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Watch Stream</a>
-        <button id="notif-btn" class="btn btn-notif">
-          <span id="notif-btn-label">🔔 Enable Notifications</span>
-          <div class="notif-settings">
-            <label>
-              <input type="checkbox" id="notif-announced" checked />
-              <span>Stream announced</span>
-            </label>
-            <label>
-              <input type="checkbox" id="notif-1hour" checked />
-              <span>1 hour before</span>
-            </label>
-            <label>
-              <input type="checkbox" id="notif-live" checked />
-              <span>Starting now</span>
-            </label>
-            <button class="notif-disable-all" id="notif-disable-all">disable all</button>
-          </div>
-        </button>
-      </div>
-
-      <div id="notif-prompt" class="notif-prompt" style="display: none;">
-        Notifications are saved locally. They'll persist across streams.
       </div>
     </div>
 
@@ -458,6 +459,31 @@
       <h2 class="live-heading">Stream is going on right now!</h2>
       <div class="actions">
         <a id="watch-btn-live" href="#" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Watch on YouTube</a>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS (always visible) -->
+    <div class="notif-section">
+      <button id="notif-btn" class="btn btn-notif">
+        <span id="notif-btn-label">🔔 Enable Notifications</span>
+        <div class="notif-settings">
+          <button class="notif-disable-all" id="notif-disable-all" disabled>disable all</button>
+          <label>
+            <input type="checkbox" id="notif-announced" />
+            <span>Stream announced</span>
+          </label>
+          <label>
+            <input type="checkbox" id="notif-1hour" />
+            <span>1 hour before</span>
+          </label>
+          <label>
+            <input type="checkbox" id="notif-live" />
+            <span>Starting now</span>
+          </label>
+        </div>
+      </button>
+      <div id="notif-prompt" class="notif-prompt" style="display: none;">
+        Notifications are saved locally. They'll persist across streams.
       </div>
     </div>
   </div>
@@ -478,7 +504,10 @@
     // CONFIGURATION & STATE
     // ============================================================
 
-    const CONFIG_URL = 'https://raw.githubusercontent.com/finnglink/glnnk-static/refs/heads/main/live/countdown-data.json';
+    const CONFIG_URLS = [
+      'https://raw.githubusercontent.com/finnglink/glnnk-static/refs/heads/main/live/countdown-data.json',
+      '/live/countdown-data.json'
+    ];
 
     let config = {
       nextStreamTime: null,
@@ -490,9 +519,9 @@
 
     // Notification settings (stored locally, no cookies)
     const notifDefaults = {
-      announced: true,
-      oneHourBefore: true,
-      liveNow: true
+      announced: false,
+      oneHourBefore: false,
+      liveNow: false
     };
 
     let notifSettings = JSON.parse(localStorage.getItem('streamNotifSettings') || JSON.stringify(notifDefaults));
@@ -513,15 +542,19 @@
     // ============================================================
 
     async function loadConfig() {
-      try {
-        const response = await fetch(CONFIG_URL + '?t=' + Date.now());
-        if (!response.ok) throw new Error('Config not loaded');
-        config = await response.json();
-        updateDisplay();
-      } catch (error) {
-        console.error('Failed to load config:', error);
-        showState('empty');
+      for (const url of CONFIG_URLS) {
+        try {
+          const response = await fetch(url + '?t=' + Date.now());
+          if (!response.ok) continue;
+          config = await response.json();
+          updateDisplay();
+          return;
+        } catch (e) {
+          continue;
+        }
       }
+      console.error('All config URLs failed');
+      showState('empty');
     }
 
     // ============================================================
@@ -673,21 +706,21 @@
         updateNotifUI();
       };
 
+      // Clicking the button label enables all three
       btn.onclick = (e) => {
         if (e.target.closest('.notif-settings')) return;
+        notifSettings.announced = true;
+        notifSettings.oneHourBefore = true;
+        notifSettings.liveNow = true;
+        announced.checked = true;
+        oneHour.checked = true;
+        live.checked = true;
+        localStorage.setItem('streamNotifSettings', JSON.stringify(notifSettings));
         if ('Notification' in window && Notification.permission !== 'granted') {
-          Notification.requestPermission().then(() => {
-            updateNotifUI();
-            btn.classList.toggle('open');
-          });
-        } else {
-          btn.classList.toggle('open');
+          Notification.requestPermission().then(() => updateNotifUI());
         }
+        updateNotifUI();
       };
-
-      document.addEventListener('click', (e) => {
-        if (!btn.contains(e.target)) btn.classList.remove('open');
-      });
 
       document.getElementById('notif-disable-all').onclick = (e) => {
         e.stopPropagation();
@@ -698,7 +731,6 @@
         oneHour.checked = false;
         live.checked = false;
         localStorage.setItem('streamNotifSettings', JSON.stringify(notifSettings));
-        btn.classList.remove('open');
         updateNotifUI();
       };
 
@@ -708,7 +740,10 @@
     function updateNotifUI() {
       const btn = document.getElementById('notif-btn');
       const label = document.getElementById('notif-btn-label');
+      const disableAllBtn = document.getElementById('notif-disable-all');
       const isEnabled = Object.values(notifSettings).some(v => v);
+
+      disableAllBtn.disabled = !isEnabled;
 
       if (isEnabled && Notification.permission === 'granted') {
         btn.classList.add('enabled');
