@@ -36,6 +36,7 @@
     .container {
       width: 100%;
       max-width: 600px;
+      margin: 0 auto;
     }
 
     /* ── STREAM CARD (unified for all states) ─────────────── */
@@ -215,11 +216,8 @@
 
     /* ── NOTIFICATIONS ────────────────────────────────────── */
     .notif-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 24px;
       position: relative;
+      display: inline-flex;
     }
 
     .btn-notif.enabled {
@@ -295,17 +293,6 @@
       accent-color: var(--accent);
     }
 
-    .notif-prompt {
-      margin-top: 12px;
-      padding: 10px 12px;
-      background: var(--accent-dim);
-      border: 1px solid rgba(255,114,234,0.2);
-      border-radius: var(--radius);
-      font-size: 11px;
-      color: var(--muted);
-      text-align: center;
-    }
-
     /* ── RESPONSIVE ───────────────────────────────────────── */
     @media (max-width: 600px) {
       .stream-card { padding: 32px 20px; }
@@ -343,22 +330,17 @@
       <div class="actions">
         <a id="watch-btn" href="#" class="btn btn-primary"
            target="_blank" rel="noopener noreferrer">Watch Stream</a>
-      </div>
-    </div>
-
-    <!-- NOTIFICATIONS — always visible, outside card -->
-    <div class="notif-section">
-      <button id="notif-btn" class="btn btn-notif">
-        <span id="notif-btn-label">🔔 Enable Notifications</span>
-      </button>
-      <div class="notif-settings">
-        <button class="notif-disable-all" id="notif-disable-all" disabled>disable all</button>
-        <label><input type="checkbox" id="notif-announced" /><span>Stream announced</span></label>
-        <label><input type="checkbox" id="notif-1hour" /><span>1 hour before</span></label>
-        <label><input type="checkbox" id="notif-live" /><span>Starting now</span></label>
-      </div>
-      <div id="notif-prompt" class="notif-prompt" style="display:none;">
-        Notifications are saved locally and persist across streams.
+        <div class="notif-section">
+          <button id="notif-btn" class="btn btn-notif">
+            <span id="notif-btn-label">🔔 Enable Notifications</span>
+          </button>
+          <div class="notif-settings">
+            <button class="notif-disable-all" id="notif-disable-all" disabled>disable all</button>
+            <label><input type="checkbox" id="notif-announced" /><span>Stream announced</span></label>
+            <label><input type="checkbox" id="notif-1hour" /><span>1 hour before</span></label>
+            <label><input type="checkbox" id="notif-live" /><span>Starting now</span></label>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -741,8 +723,10 @@
       oneHour.onchange   = () => { notifSettings.oneHourBefore  = oneHour.checked;   persist(); };
       live.onchange      = () => { notifSettings.liveNow        = live.checked;       persist(); };
 
-      // Click the button = enable all + request permission
+      // Click the button = enable all + request permission, but only if all are off
       btn.onclick = () => {
+        const anyOn = Object.values(notifSettings).some(Boolean);
+        if (anyOn) return; // some are manually set — do nothing, let dropdown handle it
         notifSettings.announced     = true;
         notifSettings.oneHourBefore = true;
         notifSettings.liveNow       = true;
@@ -781,7 +765,6 @@
       } else if (denied) {
         btn.classList.remove('enabled');
         label.textContent = '🔔 Notifications Blocked';
-        document.getElementById('notif-prompt').style.display = 'block';
       } else {
         btn.classList.remove('enabled');
         label.textContent = '🔔 Enable Notifications';
