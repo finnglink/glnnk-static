@@ -1,0 +1,33 @@
+order: 6
+category: Music Gear
+products:
+  - name: Ableton Push 3 Standalone
+    desc: My main music station. More fun than a computer
+    ref: false
+    global_link: https://www.ableton.com/shop/push/
+    global_store: ableton.com
+  - name: Ableton Move
+    desc: Baby push basically
+    ref: false
+    global_link: https://www.ableton.com/shop/move/
+    global_store: ableton.com
+  - name: Ableton Move Case
+    desc: Perfect little carrying case for the Move
+    ref: true
+    links:
+      DE: https://amzn.to/4vFFc3S
+      UK: https://amzn.to/4eA0HNm
+  - name: Adam Audio D3V Monitors
+    desc: My studio speakers
+    ref: true
+    links:
+      DE: https://amzn.to/40SKYkB
+      US: https://amzn.to/4cqbKaG
+      UK: https://amzn.to/3Qfj0NZ
+  - name: Sennheiser IE 100 Pro
+    desc: My go-to headphones
+    ref: true
+    links:
+      DE: https://amzn.to/3QDNSHX
+      US: https://amzn.to/4sJcfBl
+      UK: https://amzn.to/42lawHH

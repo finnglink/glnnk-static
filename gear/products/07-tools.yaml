@@ -1,0 +1,16 @@
+order: 7
+category: Tools
+products:
+  - name: Weller WE1010 Soldering Station
+    desc: Great soldering iron, been using mine for 10 years
+    ref: true
+    links:
+      DE: https://amzn.to/4d2BGK9
+      US: https://amzn.to/4tAgMr5
+      UK: https://amzn.to/4u59cEU
+  - name: Hikmicro Minie Thermal Camera
+    desc: A fun little gadget
+    ref: true
+    links:
+      DE: https://amzn.to/4lO9blx
+      UK: https://amzn.to/3OyIWna

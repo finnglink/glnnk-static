@@ -1,0 +1,8 @@
+order: 8
+category: Other
+products:
+  - name: Epidemic Sound
+    desc: Where I get my music
+    ref: false
+    global_link: https://www.epidemicsound.com/referral/jn2dv2
+    global_store: epidemicsound.com

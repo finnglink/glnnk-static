@@ -1,0 +1,24 @@
+order: 3
+category: Accessories
+products:
+  - name: Lexar SD Card 64GB
+    desc: Good 'ol SD card. I have probably 15 of these
+    ref: true
+    links:
+      DE: https://amzn.to/4cD5mvv
+      US: https://amzn.to/4cyrYi5
+      UK: https://amzn.to/4mIREeZ
+  - name: Osmo Pocket MicroSD Card
+    desc: MicroSD Cards I use for my Pocket 4 or GoPro
+    ref: true
+    links:
+      DE: https://amzn.to/3Othasd
+      US: https://amzn.to/4tsNafl
+      UK: https://amzn.to/48YT2o8
+  - name: SanDisk Extreme SSD 2TB
+    desc: Compact portable SSD
+    ref: true
+    links:
+      DE: https://amzn.to/4sRACwF
+      US: https://amzn.to/3OWtRMh
+      UK: https://amzn.to/4sM4HOa

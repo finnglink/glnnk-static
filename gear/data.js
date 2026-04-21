@@ -3,133 +3,384 @@
 
 const GEAR = [
   {
-    "category": "Mobile Camera Setup",
     "order": 1,
+    "category": "Cameras",
     "products": [
       {
-        "name": "DJI Osmo Pocket 3",
-        "desc": "Main run-and-gun camera. Incredible stabilization.",
+        "name": "DJI Osmo Pocket 4 Creator Combo",
+        "desc": "My favourite little camera with everything you need",
         "ref": true,
         "links": {
-          "DE": "https://amzn.to/PLACEHOLDER_DE_OP3",
-          "US": "https://amzn.to/PLACEHOLDER_US_OP3",
-          "UK": "https://amzn.to/PLACEHOLDER_UK_OP3"
+          "DE": "https://amzn.to/4mFfBE1",
+          "UK": "https://amzn.to/4tVHTwp"
         }
       },
       {
-        "name": "DJI Mic 2",
-        "desc": "Wireless mic system with built-in recorder.",
+        "name": "DJI Osmo Pocket 4 Essential",
+        "desc": "My favourite little camera with no accessories",
         "ref": true,
         "links": {
-          "DE": "https://amzn.to/PLACEHOLDER_DE_MIC2",
-          "US": "https://amzn.to/PLACEHOLDER_US_MIC2",
-          "UK": "https://amzn.to/PLACEHOLDER_UK_MIC2"
+          "DE": "https://amzn.to/4mIPCvn",
+          "UK": "https://amzn.to/4vYfRCy"
         }
       },
       {
-        "name": "DJI Mic Mini",
-        "desc": "Smaller, lighter companion mic option.",
+        "name": "DJI Osmo Pocket 3 Creator Combo",
+        "desc": "A little older, but just as capable",
         "ref": true,
         "links": {
-          "DE": "https://amzn.to/PLACEHOLDER_DE_MICMINI",
-          "US": "https://amzn.to/PLACEHOLDER_US_MICMINI",
-          "UK": "https://amzn.to/PLACEHOLDER_UK_MICMINI"
+          "DE": "https://amzn.to/4dVsCXU",
+          "US": "https://amzn.to/4u2M4GV",
+          "UK": "https://amzn.to/41McQYc"
+        }
+      },
+      {
+        "name": "Insta360 Throwpod",
+        "desc": "Super convenient tripod. Also works as a selfie stick",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/4tkiVac",
+          "US": "https://amzn.to/3QexvBH",
+          "UK": "https://amzn.to/4cV8kg6"
+        }
+      },
+      {
+        "name": "Rollei C5i Carbon Fiber Tripod",
+        "desc": "My go-to tripod for ages",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/4cBFfoD",
+          "US": "https://amzn.to/4vEGjRv",
+          "UK": "https://amzn.to/4d1ZJY7"
         }
       },
       {
         "name": "Sony FX3",
-        "desc": "Primary camera body. Cinema line, full frame.",
+        "desc": "My main video camera for client jobs",
         "ref": true,
         "links": {
-          "DE": "https://amzn.to/PLACEHOLDER_DE_FX3",
-          "US": "https://amzn.to/PLACEHOLDER_US_FX3",
-          "UK": "https://amzn.to/PLACEHOLDER_UK_FX3"
+          "DE": "https://teltec.de/sony-ilme-fx3a.html?c=0",
+          "US": "https://amzn.to/4cF5R8s",
+          "UK": "https://amzn.to/4e1ok1g"
         }
       },
       {
-        "name": "Sony A7C II",
-        "desc": "Compact second body with DJI Mic 2 MI Shoe support.",
+        "name": "Tilta Cage",
+        "desc": "Adds a ton of mounting options to the FX3",
         "ref": true,
         "links": {
-          "DE": "https://amzn.to/PLACEHOLDER_DE_A7CII",
-          "US": "https://amzn.to/PLACEHOLDER_US_A7CII",
-          "UK": "https://amzn.to/PLACEHOLDER_UK_A7CII"
+          "DE": "https://amzn.to/4cyqy7f",
+          "US": "https://amzn.to/3QR8j4a",
+          "UK": "https://amzn.to/3Qkika4"
         }
       },
+      {
+        "name": "Sony 24-105 F4",
+        "desc": "Wide-ranging lens with internal stabilization",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/42jnsOf",
+          "US": "https://amzn.to/4u1jjue",
+          "UK": "https://amzn.to/3OgV3oT"
+        }
+      },
+      {
+        "name": "Gobe 77mm variable ND Filter",
+        "desc": "Decent ND filter",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/3Qmr1AG",
+          "US": "https://amzn.to/3QnwR4K",
+          "UK": "https://amzn.to/4mFl6m6"
+        }
+      },
+      {
+        "name": "Laowa 12mm Zero-D",
+        "desc": "Insane wide angle lens with pretty much no distortion",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/4vCUshT",
+          "US": "https://amzn.to/4mFlmBA",
+          "UK": "https://amzn.to/3OHq850"
+        }
+      },
+      {
+        "name": "Fujifilm X100VI",
+        "desc": "My photo camera",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/4mJ1qOs",
+          "US": "https://amzn.to/48I6OeQ"
+        }
+      },
+      {
+        "name": "Gopro Hero 12",
+        "desc": "Small and waterproof",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/3OE7vz5",
+          "US": "https://amzn.to/4sPWV6e"
+        }
+      }
+    ]
+  },
+  {
+    "order": 2,
+    "category": "Microphones",
+    "products": [
       {
         "name": "Teenage Engineering CM-15",
-        "desc": "Compact cardioid mic — surprisingly great on desk.",
-        "ref": false,
-        "global_link": "https://teenage.engineering/products/cm-15",
-        "global_store": "teenage.engineering"
-      }
-    ]
-  },
-  {
-    "category": "Streaming & Audio",
-    "order": 2,
-    "products": [
-      {
-        "name": "Audio Interface",
-        "desc": "Add your actual interface here.",
+        "desc": "Portable, insane sounding microphone",
         "ref": true,
         "links": {
-          "DE": "https://amzn.to/PLACEHOLDER_DE_AI",
-          "US": "https://amzn.to/PLACEHOLDER_US_AI",
-          "UK": "https://amzn.to/PLACEHOLDER_UK_AI"
+          "DE": "https://amzn.to/3PkgZQ9",
+          "US": "https://amzn.to/4u2Oeq1",
+          "UK": "https://amzn.to/3PVsE80"
         }
       },
       {
-        "name": "Boom Arm",
-        "desc": "Add your actual boom arm here.",
+        "name": "Rode PSA1+ (orange)",
+        "desc": "Cool looking, very stury mic arm (other colors available)",
         "ref": true,
         "links": {
-          "DE": "https://amzn.to/PLACEHOLDER_DE_BOOM",
-          "US": "https://amzn.to/PLACEHOLDER_US_BOOM",
-          "UK": "https://amzn.to/PLACEHOLDER_UK_BOOM"
+          "DE": "https://amzn.to/4lVUwVK",
+          "US": "https://amzn.to/3QnXXZB",
+          "UK": "https://amzn.to/4symidk"
+        }
+      },
+      {
+        "name": "DJI Mic Mini Bundle",
+        "desc": "Super cheap and tiny wireless mic",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/3OyG21K",
+          "US": "https://amzn.to/4sNI1NA",
+          "UK": "https://amzn.to/4cF767C"
+        }
+      },
+      {
+        "name": "DJI Mic 2 Bundle",
+        "desc": "If you need connections for a proper lav",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/3Qpeqg3",
+          "US": "https://amzn.to/4sOmBzZ",
+          "UK": "https://amzn.to/3QmVLSc"
         }
       }
     ]
   },
   {
-    "category": "Lighting",
     "order": 3,
+    "category": "Accessories",
     "products": [
       {
-        "name": "Key Light",
-        "desc": "Add your light here.",
+        "name": "Lexar SD Card 64GB",
+        "desc": "Good 'ol SD card. I have probably 15 of these",
         "ref": true,
         "links": {
-          "DE": "https://amzn.to/PLACEHOLDER_DE_LIGHT",
-          "US": "https://amzn.to/PLACEHOLDER_US_LIGHT",
-          "UK": "https://amzn.to/PLACEHOLDER_UK_LIGHT"
+          "DE": "https://amzn.to/4cD5mvv",
+          "US": "https://amzn.to/4cyrYi5",
+          "UK": "https://amzn.to/4mIREeZ"
+        }
+      },
+      {
+        "name": "Osmo Pocket MicroSD Card",
+        "desc": "MicroSD Cards I use for my Pocket 4 or GoPro",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/3Othasd",
+          "US": "https://amzn.to/4tsNafl",
+          "UK": "https://amzn.to/48YT2o8"
+        }
+      },
+      {
+        "name": "SanDisk Extreme SSD 2TB",
+        "desc": "Compact portable SSD",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/4sRACwF",
+          "US": "https://amzn.to/3OWtRMh",
+          "UK": "https://amzn.to/4sM4HOa"
         }
       }
     ]
   },
   {
-    "category": "Music & Synths",
     "order": 4,
+    "category": "Lights",
     "products": [
       {
-        "name": "Eurorack Case",
-        "desc": "Add your case here.",
+        "name": "Amaran Ray 120c",
+        "desc": "My main video light",
         "ref": true,
         "links": {
-          "DE": "https://amzn.to/PLACEHOLDER_DE_CASE",
-          "US": "https://amzn.to/PLACEHOLDER_US_CASE",
-          "UK": "https://amzn.to/PLACEHOLDER_UK_CASE"
+          "DE": "https://amzn.to/4cVGdxo",
+          "US": "https://amzn.to/48hdHDP",
+          "UK": "https://amzn.to/4trWBM0"
         }
       },
       {
-        "name": "Patch Cables",
-        "desc": "Add your cable brand here.",
+        "name": "Amaran Octadome 60",
+        "desc": "Make light soft",
         "ref": true,
         "links": {
-          "DE": "https://amzn.to/PLACEHOLDER_DE_CABLES",
-          "US": "https://amzn.to/PLACEHOLDER_US_CABLES",
-          "UK": "https://amzn.to/PLACEHOLDER_UK_CABLES"
+          "DE": "https://amzn.to/4vz0NuK",
+          "US": "https://amzn.to/4mKL47W",
+          "UK": "https://amzn.to/4mJ3c24"
         }
+      },
+      {
+        "name": "Amaran P60C",
+        "desc": "RGB LED panel, one of my go-to lights",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/4t6Wqox",
+          "US": "https://amzn.to/42kquSj",
+          "UK": "https://amzn.to/4cu9RZ2"
+        }
+      },
+      {
+        "name": "Manfrotto Lightstand",
+        "desc": "I'll take a stand for these",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/4u2PUzP",
+          "US": "https://amzn.to/48NeOv3",
+          "UK": "https://amzn.to/4tW22m8"
+        }
+      },
+      {
+        "name": "Aputure MC 4-Light Kit",
+        "desc": "Nice and compact, these fit anywhere",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/4vJeNlM",
+          "US": "https://amzn.to/4mOcFoW",
+          "UK": "https://amzn.to/3Ov4MYL"
+        }
+      }
+    ]
+  },
+  {
+    "order": 5,
+    "category": "Stream Setup",
+    "products": [
+      {
+        "name": "Blackmagic Atem Pro ISO",
+        "desc": "My streaming device. Can also record multicam video",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/3QeAQRf",
+          "US": "https://amzn.to/48zyMcT",
+          "UK": "https://amzn.to/4ekkdh1"
+        }
+      },
+      {
+        "name": "Feelworld LUT6S",
+        "desc": "My monitor for on-camera use or streaming",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/483RQzk",
+          "US": "https://amzn.to/4cIXg4t",
+          "UK": "https://amzn.to/4t3pZrh"
+        }
+      },
+      {
+        "name": "Smallrig Monitor Mount",
+        "desc": "Monitor needs to be mounted somehow",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/3OFlOmR",
+          "UK": "https://amzn.to/4e20ORO"
+        }
+      }
+    ]
+  },
+  {
+    "order": 6,
+    "category": "Music Gear",
+    "products": [
+      {
+        "name": "Ableton Push 3 Standalone",
+        "desc": "My main music station. More fun than a computer",
+        "ref": false,
+        "global_link": "https://www.ableton.com/shop/push/",
+        "global_store": "ableton.com"
+      },
+      {
+        "name": "Ableton Move",
+        "desc": "Baby push basically",
+        "ref": false,
+        "global_link": "https://www.ableton.com/shop/move/",
+        "global_store": "ableton.com"
+      },
+      {
+        "name": "Ableton Move Case",
+        "desc": "Perfect little carrying case for the Move",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/4vFFc3S",
+          "UK": "https://amzn.to/4eA0HNm"
+        }
+      },
+      {
+        "name": "Adam Audio D3V Monitors",
+        "desc": "My studio speakers",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/40SKYkB",
+          "US": "https://amzn.to/4cqbKaG",
+          "UK": "https://amzn.to/3Qfj0NZ"
+        }
+      },
+      {
+        "name": "Sennheiser IE 100 Pro",
+        "desc": "My go-to headphones",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/3QDNSHX",
+          "US": "https://amzn.to/4sJcfBl",
+          "UK": "https://amzn.to/42lawHH"
+        }
+      }
+    ]
+  },
+  {
+    "order": 7,
+    "category": "Tools",
+    "products": [
+      {
+        "name": "Weller WE1010 Soldering Station",
+        "desc": "Great soldering iron, been using mine for 10 years",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/4d2BGK9",
+          "US": "https://amzn.to/4tAgMr5",
+          "UK": "https://amzn.to/4u59cEU"
+        }
+      },
+      {
+        "name": "Hikmicro Minie Thermal Camera",
+        "desc": "A fun little gadget",
+        "ref": true,
+        "links": {
+          "DE": "https://amzn.to/4lO9blx",
+          "UK": "https://amzn.to/3OyIWna"
+        }
+      }
+    ]
+  },
+  {
+    "order": 8,
+    "category": "Other",
+    "products": [
+      {
+        "name": "Epidemic Sound",
+        "desc": "Where I get my music",
+        "ref": false,
+        "global_link": "https://www.epidemicsound.com/referral/jn2dv2",
+        "global_store": "epidemicsound.com"
       }
     ]
   }

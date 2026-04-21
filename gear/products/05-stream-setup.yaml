@@ -1,0 +1,23 @@
+order: 5
+category: Stream Setup
+products:
+  - name: Blackmagic Atem Pro ISO
+    desc: My streaming device. Can also record multicam video
+    ref: true
+    links:
+      DE: https://amzn.to/3QeAQRf
+      US: https://amzn.to/48zyMcT
+      UK: https://amzn.to/4ekkdh1
+  - name: Feelworld LUT6S
+    desc: My monitor for on-camera use or streaming
+    ref: true
+    links:
+      DE: https://amzn.to/483RQzk
+      US: https://amzn.to/4cIXg4t
+      UK: https://amzn.to/4t3pZrh
+  - name: Smallrig Monitor Mount
+    desc: Monitor needs to be mounted somehow
+    ref: true
+    links:
+      DE: https://amzn.to/3OFlOmR
+      UK: https://amzn.to/4e20ORO

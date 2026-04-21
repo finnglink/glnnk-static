@@ -1,0 +1,83 @@
+order: 1
+category: Cameras
+products:
+  - name: DJI Osmo Pocket 4 Creator Combo
+    desc: My favourite little camera with everything you need
+    ref: true
+    links:
+      DE: https://amzn.to/4mFfBE1
+      UK: https://amzn.to/4tVHTwp
+  - name: DJI Osmo Pocket 4 Essential
+    desc: My favourite little camera with no accessories
+    ref: true
+    links:
+      DE: https://amzn.to/4mIPCvn
+      UK: https://amzn.to/4vYfRCy
+  - name: DJI Osmo Pocket 3 Creator Combo
+    desc: A little older, but just as capable
+    ref: true
+    links:
+      DE: https://amzn.to/4dVsCXU
+      US: https://amzn.to/4u2M4GV
+      UK: https://amzn.to/41McQYc
+  - name: Insta360 Throwpod
+    desc: Super convenient tripod. Also works as a selfie stick
+    ref: true
+    links:
+      DE: https://amzn.to/4tkiVac
+      US: https://amzn.to/3QexvBH
+      UK: https://amzn.to/4cV8kg6
+  - name: Rollei C5i Carbon Fiber Tripod
+    desc: My go-to tripod for ages
+    ref: true
+    links:
+      DE: https://amzn.to/4cBFfoD
+      US: https://amzn.to/4vEGjRv
+      UK: https://amzn.to/4d1ZJY7
+  - name: Sony FX3
+    desc: My main video camera for client jobs
+    ref: true
+    links:
+      DE: https://teltec.de/sony-ilme-fx3a.html?c=0
+      US: https://amzn.to/4cF5R8s
+      UK: https://amzn.to/4e1ok1g
+  - name: Tilta Cage
+    desc: Adds a ton of mounting options to the FX3
+    ref: true
+    links:
+      DE: https://amzn.to/4cyqy7f
+      US: https://amzn.to/3QR8j4a
+      UK: https://amzn.to/3Qkika4
+  - name: Sony 24-105 F4
+    desc: Wide-ranging lens with internal stabilization
+    ref: true
+    links:
+      DE: https://amzn.to/42jnsOf
+      US: https://amzn.to/4u1jjue
+      UK: https://amzn.to/3OgV3oT
+  - name: Gobe 77mm variable ND Filter
+    desc: Decent ND filter
+    ref: true
+    links:
+      DE: https://amzn.to/3Qmr1AG
+      US: https://amzn.to/3QnwR4K
+      UK: https://amzn.to/4mFl6m6
+  - name: Laowa 12mm Zero-D
+    desc: Insane wide angle lens with pretty much no distortion
+    ref: true
+    links:
+      DE: https://amzn.to/4vCUshT
+      US: https://amzn.to/4mFlmBA
+      UK: https://amzn.to/3OHq850
+  - name: Fujifilm X100VI
+    desc: My photo camera
+    ref: true
+    links:
+      DE: https://amzn.to/4mJ1qOs
+      US: https://amzn.to/48I6OeQ
+  - name: Gopro Hero 12
+    desc: Small and waterproof
+    ref: true
+    links:
+      DE: https://amzn.to/3OE7vz5
+      US: https://amzn.to/4sPWV6e

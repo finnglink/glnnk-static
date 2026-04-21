@@ -1,0 +1,31 @@
+order: 2
+category: Microphones
+products:
+  - name: Teenage Engineering CM-15
+    desc: Portable, insane sounding microphone
+    ref: true
+    links:
+      DE: https://amzn.to/3PkgZQ9
+      US: https://amzn.to/4u2Oeq1
+      UK: https://amzn.to/3PVsE80
+  - name: Rode PSA1+ (orange)
+    desc: Cool looking, very stury mic arm (other colors available)
+    ref: true
+    links:
+      DE: https://amzn.to/4lVUwVK
+      US: https://amzn.to/3QnXXZB
+      UK: https://amzn.to/4symidk
+  - name: DJI Mic Mini Bundle
+    desc: Super cheap and tiny wireless mic
+    ref: true
+    links:
+      DE: https://amzn.to/3OyG21K
+      US: https://amzn.to/4sNI1NA
+      UK: https://amzn.to/4cF767C
+  - name: DJI Mic 2 Bundle
+    desc: If you need connections for a proper lav
+    ref: true
+    links:
+      DE: https://amzn.to/3Qpeqg3
+      US: https://amzn.to/4sOmBzZ
+      UK: https://amzn.to/3QmVLSc

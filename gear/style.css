@@ -17,7 +17,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font);
-  font-size: 15.4px; /* base ~14px × 1.1 */
+  font-size: 15.4px;
   min-height: 100vh;
   padding: 0 0 80px;
 }
@@ -44,7 +44,7 @@ header {
   margin-bottom: 10px;
 }
 
-.site-title:hover { color: #fff; text-decoration: underline; }
+.site-title:hover { text-decoration: underline; }
 
 h1 {
   font-size: clamp(40px, 6vw, 72px);
@@ -55,7 +55,6 @@ h1 {
   color: var(--text);
 }
 
-/* Referral disclaimer — prominent */
 .ref-disclaimer {
   display: flex;
   align-items: flex-start;
@@ -99,10 +98,7 @@ h1 {
   white-space: nowrap;
 }
 
-.region-buttons {
-  display: flex;
-  gap: 8px;
-}
+.region-buttons { display: flex; gap: 8px; }
 
 .region-btn {
   font-family: var(--font);
@@ -118,10 +114,7 @@ h1 {
   letter-spacing: 0.04em;
 }
 
-.region-btn:hover {
-  border-color: var(--accent);
-  color: var(--text);
-}
+.region-btn:hover { border-color: var(--accent); color: var(--text); }
 
 .region-btn.active {
   background: var(--accent);
@@ -129,7 +122,7 @@ h1 {
   color: #000;
 }
 
-/* ── MAIN LAYOUT ─────────────────────────────────────────── */
+/* ── MAIN & INTRO ────────────────────────────────────────── */
 
 main {
   max-width: 960px;
@@ -137,11 +130,19 @@ main {
   padding: 48px 40px 0;
 }
 
+.intro {
+  font-size: 13.2px;
+  color: var(--muted);
+  line-height: 1.75;
+  border-left: 2px solid var(--border);
+  padding-left: 16px;
+  margin-bottom: 48px;
+  max-width: 640px;
+}
+
 /* ── CATEGORY ────────────────────────────────────────────── */
 
-.category {
-  margin-bottom: 56px;
-}
+.category { margin-bottom: 56px; }
 
 .category-header {
   display: flex;
@@ -213,7 +214,6 @@ main {
 
 .product-desc {
   font-size: 12.1px;
-  font-weight: 400;
   color: var(--muted);
   line-height: 1.6;
 }
@@ -224,6 +224,16 @@ main {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+}
+
+/* unavailable badge */
+.unavailable {
+  font-size: 11px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 5px 12px;
+  opacity: 0.5;
 }
 
 /* ── BUTTONS ─────────────────────────────────────────────── */
@@ -279,22 +289,12 @@ footer {
   transition: color 0.15s;
 }
 
-.legal-link:hover {
-  color: var(--text);
-  text-decoration: underline;
-}
+.legal-link:hover { color: var(--text); text-decoration: underline; }
 
 /* ── RESPONSIVE ──────────────────────────────────────────── */
 
 @media (max-width: 600px) {
-  header,
-  .region-bar,
-  main,
-  footer {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-
+  header, .region-bar, main, footer { padding-left: 20px; padding-right: 20px; }
   h1 { font-size: 40px; }
   .ref-disclaimer { max-width: 100%; }
   header { align-items: flex-start; flex-direction: column; }

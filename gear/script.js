@@ -1,5 +1,5 @@
 // script.js — gear page logic
-// Depends on: data.js (GEAR constant), injected before this script
+// Depends on: data.js (GEAR constant), loaded before this script
 
 let currentRegion = localStorage.getItem('gear-region') || 'DE';
 
@@ -7,7 +7,13 @@ let currentRegion = localStorage.getItem('gear-region') || 'DE';
 
 function renderAll() {
   const app = document.getElementById('app');
-  app.innerHTML = GEAR.map(renderCategory).join('');
+  // Keep the intro paragraph, append categories after it
+  const intro = app.querySelector('.intro');
+  app.innerHTML = '';
+  if (intro) app.appendChild(intro);
+  GEAR.forEach(cat => {
+    app.insertAdjacentHTML('beforeend', renderCategory(cat));
+  });
   bindToggles();
 }
 
@@ -27,22 +33,33 @@ function renderCategory(cat) {
 
 function renderProduct(p) {
   const isGlobal = !!p.global_link;
-  const storeName = p.global_store || 'store';
 
-  const linksHTML = isGlobal
-    ? `<a class="buy-btn buy-btn-primary"
+  let linksHTML;
+  if (isGlobal) {
+    const store = p.global_store || 'store';
+    linksHTML = `
+      <a class="buy-btn buy-btn-primary"
          href="${esc(p.global_link)}"
          target="_blank" rel="noopener">
-         ${p.ref ? '★ ' : ''}Buy on ${esc(storeName)}
-       </a>`
-    : `<a class="buy-btn buy-btn-primary region-link"
-         href="${esc(p.links[currentRegion])}"
-         target="_blank" rel="noopener"
-         data-de="${esc(p.links.DE)}"
-         data-us="${esc(p.links.US)}"
-         data-uk="${esc(p.links.UK)}">
-         ${p.ref ? '★ ' : ''}Buy on Amazon
-       </a>`;
+        ${p.ref ? '★ ' : ''}Buy on ${esc(store)}
+      </a>`;
+  } else {
+    const link = p.links && p.links[currentRegion];
+    if (link) {
+      linksHTML = `
+        <a class="buy-btn buy-btn-primary region-link"
+           href="${esc(link)}"
+           target="_blank" rel="noopener"
+           data-de="${esc(p.links.DE  || '')}"
+           data-us="${esc(p.links.US  || '')}"
+           data-uk="${esc(p.links.UK  || '')}">
+          ${p.ref ? '★ ' : ''}Buy on Amazon
+        </a>`;
+    } else {
+      // Not available in selected region
+      linksHTML = `<span class="unavailable">Not available in ${currentRegion}</span>`;
+    }
+  }
 
   return `
     <div class="product-card">
@@ -63,12 +80,11 @@ function updateRegion(region) {
     btn.classList.toggle('active', btn.dataset.region === region);
   });
 
-  document.querySelectorAll('.region-link').forEach(link => {
-    link.href = link.dataset[region.toLowerCase()];
-  });
+  // Re-render products (handles unavailable state cleanly)
+  renderAll();
 }
 
-// ── ACCORDION ────────────────────────────────────────────
+// ── ACCORDION ─────────────────────────────────────────────
 
 function bindToggles() {
   document.querySelectorAll('.category-header').forEach(header => {

@@ -1,0 +1,38 @@
+order: 4
+category: Lights
+products:
+  - name: Amaran Ray 120c
+    desc: My main video light
+    ref: true
+    links:
+      DE: https://amzn.to/4cVGdxo
+      US: https://amzn.to/48hdHDP
+      UK: https://amzn.to/4trWBM0
+  - name: Amaran Octadome 60
+    desc: Make light soft
+    ref: true
+    links:
+      DE: https://amzn.to/4vz0NuK
+      US: https://amzn.to/4mKL47W
+      UK: https://amzn.to/4mJ3c24
+  - name: Amaran P60C
+    desc: RGB LED panel, one of my go-to lights
+    ref: true
+    links:
+      DE: https://amzn.to/4t6Wqox
+      US: https://amzn.to/42kquSj
+      UK: https://amzn.to/4cu9RZ2
+  - name: Manfrotto Lightstand
+    desc: I'll take a stand for these
+    ref: true
+    links:
+      DE: https://amzn.to/4u2PUzP
+      US: https://amzn.to/48NeOv3
+      UK: https://amzn.to/4tW22m8
+  - name: Aputure MC 4-Light Kit
+    desc: Nice and compact, these fit anywhere
+    ref: true
+    links:
+      DE: https://amzn.to/4vJeNlM
+      US: https://amzn.to/4mOcFoW
+      UK: https://amzn.to/3Ov4MYL
