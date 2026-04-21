@@ -38,7 +38,6 @@ products:
     desc: My main video camera for client jobs
     ref: true
     links:
-      DE: https://teltec.de/sony-ilme-fx3a.html?c=0
       US: https://amzn.to/4cF5R8s
       UK: https://amzn.to/4e1ok1g
   - name: Tilta Cage

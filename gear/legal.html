@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Impressum — Glnnk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0e0e0e;
+      --surface: #161616;
+      --border: #2a2a2a;
+      --text: #e8e4dc;
+      --muted: #666;
+      --accent: #50feff;
+      --accent-dim: rgba(80, 254, 255, 0.07);
+      --accent-border: rgba(80, 254, 255, 0.3);
+      --radius: 6px;
+      --font: 'IBM Plex Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15.4px;
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────── */
+
+    header {
+      padding: 48px 40px 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .site-title {
+      display: block;
+      font-size: 13.2px;
+      font-weight: 400;
+      color: #fff;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      margin-bottom: 10px;
+    }
+
+    .site-title:hover { text-decoration: underline; }
+
+    h1 {
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 0.9;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+
+    /* ── MAIN ────────────────────────────────────────────── */
+
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 56px 40px 0;
+    }
+
+    /* ── SECTIONS ────────────────────────────────────────── */
+
+    .section {
+      margin-bottom: 40px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section:last-child {
+      border-bottom: none;
+    }
+
+    h2 {
+      font-size: 12.1px;
+      font-weight: 700;
+      font-style: italic;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    p {
+      font-size: 15.4px;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.75;
+    }
+
+    p + p {
+      margin-top: 10px;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    /* DSA box */
+    .dsa-box {
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+
+    .dsa-box p {
+      font-size: 13.2px;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* source note */
+    .source {
+      font-size: 12.1px;
+      color: var(--muted);
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── FOOTER ──────────────────────────────────────────── */
+
+    footer {
+      max-width: 680px;
+      margin: 80px auto 0;
+      padding: 24px 40px;
+      border-top: 1px solid var(--border);
+      font-size: 13.2px;
+    }
+
+    .back-link {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .back-link:hover { color: var(--text); text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      header, main, footer { padding-left: 20px; padding-right: 20px; }
+      h1 { font-size: 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="site-title">glnnk.art</a>
+  <h1>Impressum</h1>
+</header>
+
+<main>
+
+  <div class="section">
+    <h2>Angaben gemäß § 5 TMG</h2>
+    <p>
+      Finn Glink<br />
+      Freelancer &amp; Content Creator<br />
+      Am Hünenstein 4<br />
+      20535 Hamburg
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>Kontakt</h2>
+    <p>
+      Telefon: +4915121432340<br />
+      E-Mail: <a href="mailto:finn@glnnk.art">finn@glnnk.art</a>
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>Umsatzsteuer-ID</h2>
+    <p>
+      Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:<br />
+      DE351590477
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>Redaktionell verantwortlich</h2>
+    <p>Finn Glink</p>
+  </div>
+
+  <div class="section">
+    <h2>Verbraucherstreitbeilegung / Universalschlichtungsstelle</h2>
+    <p>
+      Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
+      Verbraucherschlichtungsstelle teilzunehmen.
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>Zentrale Kontaktstelle nach dem Digital Services Act (DSA)</h2>
+    <p>Unsere zentrale Kontaktstelle für Nutzer und Behörden nach Art. 11, 12 DSA (Verordnung (EU) 2022/265) erreichen Sie wie folgt:</p>
+    <div class="dsa-box">
+      <p>
+        E-Mail: <a href="mailto:finn@glnnk.art">finn@glnnk.art</a><br />
+        Telefon: +4915121432340<br /><br />
+        Die für den Kontakt zur Verfügung stehenden Sprachen sind: Deutsch, Englisch.
+      </p>
+    </div>
+  </div>
+
+  <p class="source">Quelle: <a href="https://www.e-recht24.de" target="_blank" rel="noopener">eRecht24</a></p>
+
+</main>
+
+<footer>
+  <a href="/gear" class="back-link">← Zurück zur Gear-Seite</a>
+</footer>
+
+</body>
+</html>
