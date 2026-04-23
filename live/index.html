@@ -40,37 +40,14 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px 20px;
+      padding: 20px;
+      padding-bottom: 8vh;
     }
 
     /* ── PAGE SHELL ── */
     .page {
       width: 100%;
       max-width: 580px;
-    }
-
-    header {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      margin-bottom: 48px;
-    }
-
-    .site-title {
-      font-size: 11px;
-      color: var(--muted2);
-      text-decoration: none;
-      letter-spacing: 0.08em;
-    }
-    .site-title:hover { color: var(--accent); }
-
-    .header-sep { color: var(--muted); font-size: 11px; }
-
-    header h1 {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: 0.05em;
     }
 
     /* ── CONTENT AREA ── */
@@ -346,12 +323,6 @@
 <body>
 
 <div class="page">
-  <header>
-    <a href="/" class="site-title">glnnk.art</a>
-    <span class="header-sep">/</span>
-    <h1>live</h1>
-  </header>
-
   <div class="content" id="content">
     <div class="loading">loading...</div>
   </div>
@@ -486,6 +457,7 @@ function renderUpcoming(streams) {
   clearCountdown();
 
   const dateStr = formatDate(next.scheduledStart);
+  const dateLine = dateStr ? `<div class="stream-date">${dateStr}</div>` : '';
 
   let upcomingHTML = '';
   if (rest.length > 0) {
@@ -516,7 +488,7 @@ function renderUpcoming(streams) {
       ${rest.length > 0 ? 'Next up' : 'Upcoming stream'}
     </div>
     <div class="stream-title">${escHtml(next.title)}</div>
-    <div class="stream-date">${dateStr}</div>
+    ${dateLine}
     <div class="countdown" id="countdown">--:--:--</div>
     <div class="countdown-label">hours · minutes · seconds</div>
     <div class="btn-row">
@@ -613,15 +585,18 @@ function clearCountdown() {
 
 // ── DATE FORMATTING ───────────────────────────────────────────────────────
 function formatDate(isoTime) {
-  return new Date(isoTime).toLocaleString(navigator.language, {
-    weekday: 'short',
-    day:     'numeric',
-    month:   'long',
-    year:    'numeric',
-    hour:    '2-digit',
-    minute:  '2-digit',
-    timeZoneName: 'short',
-  });
+  if (!isoTime) return null;
+  try {
+    return new Date(isoTime).toLocaleString(navigator.language, {
+      weekday: 'short',
+      day:     'numeric',
+      month:   'long',
+      year:    'numeric',
+      hour:    '2-digit',
+      minute:  '2-digit',
+      timeZoneName: 'short',
+    });
+  } catch { return null; }
 }
 
 function formatDateShort(isoTime) {
