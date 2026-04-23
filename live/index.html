@@ -3,20 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stream — Glnnk</title>
+  <title>Live — Glnnk</title>
+  <meta name="description" content="Glnnk livestreams — upcoming streams and live broadcasts." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg: #0e0e0e;
       --surface: #161616;
+      --surface2: #1c1c1c;
       --border: #2a2a2a;
+      --border-bright: #3a3a3a;
       --text: #e8e4dc;
-      --muted: #666;
+      --muted: #555;
+      --muted2: #888;
       --accent: #ff72ea;
-      --accent-dim: rgba(255,114,234,0.08);
+      --accent-dim: rgba(255, 114, 234, 0.08);
+      --accent-border: rgba(255, 114, 234, 0.3);
+      --live: #ff4545;
+      --live-dim: rgba(255, 69, 69, 0.1);
+      --green: #68ffb6;
+      --discord: #5865F2;
+      --discord-dim: rgba(88, 101, 242, 0.12);
       --radius: 6px;
-      --font-mono: 'IBM Plex Mono', monospace;
+      --font: 'IBM Plex Mono', monospace;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,805 +34,613 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: var(--font-mono);
+      font-family: var(--font);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 24px 20px;
     }
 
-    .container {
+    /* ── PAGE SHELL ── */
+    .page {
       width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
+      max-width: 580px;
     }
 
-    /* ── STREAM CARD (unified for all states) ─────────────── */
-    .stream-card {
-      text-align: center;
-      padding: 40px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: linear-gradient(135deg, rgba(255,114,234,0.03) 0%, transparent 100%);
+    header {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 48px;
     }
 
-    /* Meta line: "Next Stream: topic" / topic only / blank space */
-    .stream-meta {
+    .site-title {
       font-size: 11px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 8px;
-      min-height: 1.4em;
+      color: var(--muted2);
+      text-decoration: none;
+      letter-spacing: 0.08em;
     }
+    .site-title:hover { color: var(--accent); }
 
-    .stream-meta-topic {
-      color: var(--accent);
-      font-weight: 700;
-    }
+    .header-sep { color: var(--muted); font-size: 11px; }
 
-    /* Countdown numbers */
-    .countdown-display {
-      margin: 16px 0;
-    }
-
-    .countdown-time {
-      font-size: clamp(48px, 12vw, 96px);
-      font-weight: 700;
-      line-height: 1.1;
-      margin-bottom: 16px;
-      letter-spacing: -0.02em;
-      color: #fff;
-      word-break: break-word;
-    }
-
-    .countdown-time.is-empty { color: var(--muted); }
-    .countdown-time.is-live  { color: var(--accent); }
-
-    /* "until start" / "waiting for stream" — hidden but spacing preserved */
-    .countdown-label {
-      font-size: 12px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 24px;
-    }
-
-    .countdown-label.invisible { visibility: hidden; }
-
-    /* Date/time row */
-    .stream-datetime-wrap {
+    header h1 {
       font-size: 13px;
+      font-weight: 600;
       color: var(--text);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── CONTENT AREA ── */
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      min-height: 260px;
+      justify-content: center;
+    }
+
+    /* ── STATUS LINE ── */
+    .status-line {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      margin-bottom: 28px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-off   { background: var(--muted); }
+    .dot-on    { background: var(--accent); }
+    .dot-live  {
+      background: var(--live);
+      box-shadow: 0 0 6px var(--live);
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.35; }
+    }
+
+    /* ── STREAM CARD ── */
+    .stream-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+      max-width: 440px;
       margin-bottom: 8px;
-      min-height: 1.2em;
     }
 
-    .stream-datetime-prefix {
-      color: var(--muted);
-      margin-right: 4px;
-    }
-
-    /* Timezone */
-    .timezone-selector {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 32px;
+    .stream-date {
       font-size: 11px;
+      color: var(--muted2);
+      letter-spacing: 0.07em;
+      margin-bottom: 36px;
     }
 
-    .timezone-display { color: var(--muted); }
-
-    .timezone-edit-btn {
-      background: none;
-      border: none;
+    /* ── COUNTDOWN ── */
+    .countdown {
+      font-size: 52px;
+      font-weight: 600;
       color: var(--accent);
-      cursor: pointer;
-      padding: 2px 6px;
-      font-size: 12px;
-      opacity: 0.6;
-      transition: opacity 0.2s;
-      font-family: var(--font-mono);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 6px;
+      font-variant-numeric: tabular-nums;
     }
 
-    .timezone-edit-btn:hover { opacity: 1; }
-
-    /* Timezone modal */
-    .timezone-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
+    .countdown-label {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 36px;
     }
 
-    .timezone-modal.active { opacity: 1; pointer-events: all; }
-
-    .timezone-modal-content {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 32px;
-      max-width: 400px;
-      width: 90%;
-    }
-
-    .timezone-modal h3 { margin-bottom: 20px; font-size: 16px; }
-
-    .timezone-list {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      max-height: 400px;
-      overflow-y: auto;
-      margin-bottom: 20px;
-    }
-
-    .timezone-btn {
-      padding: 10px;
-      border: 1px solid var(--border);
-      background: transparent;
+    /* ── EMPTY STATE ── */
+    .empty-title {
+      font-size: 22px;
+      font-weight: 600;
       color: var(--text);
-      border-radius: var(--radius);
-      cursor: pointer;
-      font-size: 12px;
-      font-family: var(--font-mono);
-      transition: all 0.15s;
+      margin-bottom: 12px;
     }
 
-    .timezone-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .timezone-btn.active { background: var(--accent); border-color: var(--accent); color: #000; }
+    .empty-sub {
+      font-size: 12px;
+      color: var(--muted2);
+      line-height: 1.75;
+      max-width: 360px;
+      margin-bottom: 0;
+    }
 
-    /* ── BUTTONS ──────────────────────────────────────────── */
-    .actions {
+    /* ── LIVE STATE ── */
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--live-dim);
+      border: 1px solid rgba(255, 69, 69, 0.25);
+      color: var(--live);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+    }
+
+    .live-sub {
+      font-size: 12px;
+      color: var(--muted2);
+      margin-bottom: 36px;
+      margin-top: 8px;
+    }
+
+    /* ── BUTTONS ── */
+    .btn-row {
       display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
+      gap: 10px;
       justify-content: center;
+      flex-wrap: wrap;
     }
 
     .btn {
-      padding: 12px 24px;
-      border: 1px solid var(--border);
+      font-family: var(--font);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 10px 20px;
       border-radius: var(--radius);
-      background: transparent;
-      color: var(--text);
-      font-family: var(--font-mono);
-      font-size: 12px;
-      font-weight: 700;
+      border: none;
       cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      transition: all 0.15s;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-    }
-
-    .btn:hover { border-color: var(--accent); color: var(--accent); }
-
-    .btn-primary { background: var(--accent); border-color: var(--accent); color: #000; }
-    .btn-primary:hover { background: rgba(255,114,234,0.9); color: #000; }
-
-    /* ── NOTIFICATIONS ────────────────────────────────────── */
-    .notif-section {
-      position: relative;
-      display: inline-flex;
-    }
-
-    .btn-notif.enabled {
-      background: var(--accent-dim);
-      border-color: var(--accent);
-    }
-
-    /* Dropdown — sibling of button, shown on .notif-section:hover */
-    .notif-settings {
-      position: absolute;
-      bottom: calc(100% + 8px);
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 12px 16px;
+      gap: 7px;
+      transition: opacity 0.15s, transform 0.1s;
       white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
-      z-index: 100;
     }
+    .btn:active { transform: scale(0.98); }
 
-    /* Bridge gap between dropdown and button */
-    .notif-settings::after {
-      content: '';
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      height: 12px;
+    .btn-primary {
+      background: var(--accent);
+      color: #0e0e0e;
+      font-weight: 600;
     }
+    .btn-primary:hover { opacity: 0.85; }
 
-    .notif-section:hover .notif-settings {
-      opacity: 1;
-      pointer-events: all;
+    .btn-green {
+      background: var(--green);
+      color: #0e0e0e;
+      font-weight: 600;
     }
+    .btn-green:hover { opacity: 0.85; }
 
-    .notif-disable-all {
-      display: block;
+    .btn-discord {
+      background: var(--discord-dim);
+      border: 1px solid rgba(88, 101, 242, 0.3);
+      color: #8b95f5;
+    }
+    .btn-discord:hover { opacity: 0.8; }
+
+    /* ── UPCOMING LIST (accordion) ── */
+    .upcoming-wrap {
       width: 100%;
-      margin-bottom: 10px;
-      padding-bottom: 10px;
-      border: none;
-      border-bottom: 1px solid var(--border);
-      font-size: 11px;
-      color: var(--muted);
-      cursor: pointer;
-      text-align: center;
-      background: none;
-      font-family: var(--font-mono);
+      max-width: 460px;
+      margin-top: 24px;
     }
 
-    .notif-disable-all:not(:disabled):hover { color: var(--text); }
-    .notif-disable-all:disabled { opacity: 0.3; cursor: default; }
-
-    .notif-settings label {
+    .upcoming-toggle {
+      width: 100%;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted2);
+      font-family: var(--font);
+      font-size: 11px;
+      letter-spacing: 0.07em;
+      padding: 10px 16px;
+      border-radius: var(--radius);
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
+      justify-content: space-between;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .upcoming-toggle:hover {
+      border-color: var(--border-bright);
+      color: var(--text);
+    }
+
+    .toggle-icon {
+      font-size: 9px;
+      transition: transform 0.2s;
+    }
+    .upcoming-toggle.open .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .upcoming-list {
+      display: none;
+      margin-top: 6px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .upcoming-list.visible { display: block; }
+
+    .upcoming-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+    }
+    .upcoming-item:last-child { border-bottom: none; }
+    .upcoming-item:hover { background: var(--surface); }
+
+    .upcoming-item-title {
       font-size: 11px;
-      cursor: pointer;
+      color: var(--text);
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .notif-settings label:last-of-type { margin-bottom: 0; }
-
-    .notif-settings input[type="checkbox"] {
-      width: 14px;
-      height: 14px;
-      cursor: pointer;
-      accent-color: var(--accent);
+    .upcoming-item-date {
+      font-size: 10px;
+      color: var(--muted2);
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
-    /* ── RESPONSIVE ───────────────────────────────────────── */
-    @media (max-width: 600px) {
-      .stream-card { padding: 32px 20px; }
-      .countdown-time { font-size: clamp(32px, 9vw, 56px); }
-      .actions { flex-direction: column; }
-      .btn { width: 100%; justify-content: center; }
-      .timezone-list { grid-template-columns: 1fr; }
+    /* ── LOADING ── */
+    .loading {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      animation: fade 1.2s ease-in-out infinite alternate;
+    }
+    @keyframes fade {
+      from { opacity: 0.4; }
+      to   { opacity: 1; }
+    }
+
+    /* ── MOCK BANNER (dev only) ── */
+    .mock-banner {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      background: rgba(255,114,234,0.15);
+      border: 1px solid var(--accent-border);
+      color: var(--accent);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      padding: 4px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .countdown { font-size: 40px; }
+      .stream-title { font-size: 17px; }
+      .btn-row { flex-direction: column; align-items: center; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
 
-    <!-- STREAM CARD — unified layout for all states -->
-    <div class="stream-card">
-      <div class="stream-meta" id="stream-meta"></div>
+<div class="page">
+  <header>
+    <a href="/" class="site-title">glnnk.art</a>
+    <span class="header-sep">/</span>
+    <h1>live</h1>
+  </header>
 
-      <div class="countdown-display">
-        <div class="countdown-time" id="countdown-value">--:--:--</div>
-        <div class="countdown-label" id="countdown-label">until start</div>
-      </div>
+  <div class="content" id="content">
+    <div class="loading">loading...</div>
+  </div>
+</div>
 
-      <div class="stream-datetime-wrap">
-        <span class="stream-datetime-prefix" id="datetime-prefix"></span
-        ><span id="stream-datetime"></span>
-      </div>
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────
+const API_URL    = 'https://glnnk.art/live/api/streams';
+const YT_BASE    = 'https://youtube.com/channel/UCZ2HgIUmKPHZ7VuAlOBPoWw';
+const DISCORD    = 'https://discord.com/invite/Ev5PCxHXZY';
+const POLL_MS    = 60_000; // re-fetch every 60 seconds
 
-      <div class="timezone-selector">
-        <span class="timezone-display">
-          <span id="timezone-display">Loading...</span>
-          <button class="timezone-edit-btn" id="timezone-edit-btn">✎ change timezone</button>
-        </span>
-      </div>
+// ── MOCK DATA (for testing without real streams) ──────────────────────────
+// Add ?mock=empty | ?mock=one | ?mock=multi | ?mock=live to the URL
+const MOCKS = {
+  empty: { live: [], upcoming: [] },
+  one: {
+    live: [],
+    upcoming: [
+      {
+        id: 'mock1',
+        title: 'Building a Eurorack Filter from Scratch',
+        scheduledStart: new Date(Date.now() + 18.75 * 3600 * 1000).toISOString(),
+        url: YT_BASE,
+      },
+    ],
+  },
+  multi: {
+    live: [],
+    upcoming: [
+      {
+        id: 'mock1',
+        title: 'Building a Eurorack Filter from Scratch',
+        scheduledStart: new Date(Date.now() + 18.75 * 3600 * 1000).toISOString(),
+        url: YT_BASE,
+      },
+      {
+        id: 'mock2',
+        title: 'SK-1 MIDI Mod — Live Build Session',
+        scheduledStart: new Date(Date.now() + 8 * 24 * 3600 * 1000).toISOString(),
+        url: YT_BASE,
+      },
+      {
+        id: 'mock3',
+        title: '3D Printing for Musicians Q&A',
+        scheduledStart: new Date(Date.now() + 16 * 24 * 3600 * 1000).toISOString(),
+        url: YT_BASE,
+      },
+    ],
+  },
+  live: {
+    live: [
+      {
+        id: 'mockL',
+        title: 'Building a Eurorack Filter from Scratch',
+        actualStart: new Date(Date.now() - 42 * 60 * 1000).toISOString(),
+        url: YT_BASE,
+      },
+    ],
+    upcoming: [],
+  },
+};
 
-      <div class="actions">
-        <a id="watch-btn" href="#" class="btn btn-primary"
-           target="_blank" rel="noopener noreferrer">Watch Stream</a>
-        <div class="notif-section">
-          <button id="notif-btn" class="btn btn-notif">
-            <span id="notif-btn-label">🔔 Enable Notifications</span>
-          </button>
-          <div class="notif-settings">
-            <button class="notif-disable-all" id="notif-disable-all" disabled>disable all</button>
-            <label><input type="checkbox" id="notif-announced" /><span>Stream announced</span></label>
-            <label><input type="checkbox" id="notif-1hour" /><span>1 hour before</span></label>
-            <label><input type="checkbox" id="notif-live" /><span>Starting now</span></label>
-          </div>
+// ── STATE ─────────────────────────────────────────────────────────────────
+let countdownInterval = null;
+let currentStream     = null;
+let accordionOpen     = false;
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+const mockParam = new URLSearchParams(location.search).get('mock');
+
+if (mockParam && MOCKS[mockParam]) {
+  document.body.insertAdjacentHTML('beforeend', `<div class="mock-banner">mock: ${mockParam}</div>`);
+  render(MOCKS[mockParam]);
+} else {
+  fetchAndRender();
+  setInterval(fetchAndRender, POLL_MS);
+}
+
+async function fetchAndRender() {
+  try {
+    const res  = await fetch(API_URL);
+    const data = await res.json();
+    render(data);
+  } catch (err) {
+    console.error('Fetch error:', err);
+    // Keep existing state on error, don't blank the page
+  }
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────
+function render(data) {
+  if (data.live && data.live.length > 0) {
+    renderLive(data.live[0]);
+  } else if (data.upcoming && data.upcoming.length > 0) {
+    renderUpcoming(data.upcoming);
+  } else {
+    renderEmpty();
+  }
+}
+
+// ── STATE A: NOTHING ──────────────────────────────────────────────────────
+function renderEmpty() {
+  clearCountdown();
+  document.getElementById('content').innerHTML = `
+    <div class="status-line">
+      <span class="dot dot-off"></span>
+      No stream scheduled
+    </div>
+    <div class="empty-title">Nothing here yet.</div>
+    <div class="empty-sub">
+      Subscribe on YouTube to get notified when I go live.<br>
+      Stream announcements also land in my Discord first.
+    </div>
+    <div class="btn-row" style="margin-top:28px;">
+      <a href="${YT_BASE}?sub_confirmation=1" target="_blank" rel="noopener" class="btn btn-primary">
+        ↗ Subscribe on YouTube
+      </a>
+      <a href="${DISCORD}" target="_blank" rel="noopener" class="btn btn-discord">
+        ⬡ Join my Discord
+      </a>
+    </div>
+  `;
+}
+
+// ── STATE B+C: UPCOMING ───────────────────────────────────────────────────
+function renderUpcoming(streams) {
+  const next  = streams[0];
+  const rest  = streams.slice(1);
+  currentStream = next;
+
+  clearCountdown();
+
+  const dateStr = formatDate(next.scheduledStart);
+
+  let upcomingHTML = '';
+  if (rest.length > 0) {
+    const label = rest.length === 1 ? '1 more stream announced' : `${rest.length} more streams announced`;
+    const items = rest.map(s => `
+      <a href="${s.url}" target="_blank" rel="noopener" class="upcoming-item">
+        <span class="upcoming-item-title">${escHtml(s.title)}</span>
+        <span class="upcoming-item-date">${formatDateShort(s.scheduledStart)}</span>
+      </a>
+    `).join('');
+
+    upcomingHTML = `
+      <div class="upcoming-wrap">
+        <button class="upcoming-toggle" id="upcoming-toggle">
+          <span>${label}</span>
+          <span class="toggle-icon">▼</span>
+        </button>
+        <div class="upcoming-list" id="upcoming-list">
+          ${items}
         </div>
       </div>
+    `;
+  }
+
+  document.getElementById('content').innerHTML = `
+    <div class="status-line">
+      <span class="dot dot-on"></span>
+      ${rest.length > 0 ? 'Next up' : 'Upcoming stream'}
     </div>
-
-  </div>
-
-  <!-- TIMEZONE MODAL -->
-  <div id="timezone-modal" class="timezone-modal">
-    <div class="timezone-modal-content">
-      <h3>Select your timezone</h3>
-      <div class="timezone-list" id="timezone-list"></div>
-      <button class="btn btn-primary" style="width:100%;"
-              onclick="document.getElementById('timezone-modal').classList.remove('active')">
-        Done
-      </button>
+    <div class="stream-title">${escHtml(next.title)}</div>
+    <div class="stream-date">${dateStr}</div>
+    <div class="countdown" id="countdown">--:--:--</div>
+    <div class="countdown-label">hours · minutes · seconds</div>
+    <div class="btn-row">
+      <a href="${next.url}" target="_blank" rel="noopener" class="btn btn-primary">
+        ↗ Set a reminder on YouTube
+      </a>
+      <a href="${DISCORD}" target="_blank" rel="noopener" class="btn btn-discord">
+        ⬡ Join my Discord
+      </a>
     </div>
-  </div>
-
-  <script>
-    // ============================================================
-    // CONFIG
-    // ============================================================
-
-    const CONFIG_URLS = [
-      'https://raw.githubusercontent.com/finnglink/glnnk-static/refs/heads/main/live/countdown-data.json',
-      '/live/countdown-data.json'
-    ];
-
-    const YT_API_KEY = 'AIzaSyBtEyuTqvTlUSc1RnKRE9aGtGMh3cwples';
-
-    let config = {
-      nextStreamTime: null,
-      streamLink: 'https://www.youtube.com/channel/UCZ2HgIUmKPHZ7VuAlOBPoWw/live',
-      topic: '',
-      isLive: false,
-      liveUntil: null
-    };
-
-    // ── YouTube live detection state ──
-    let liveVideoId = null;
-    let ytSearchTimer = null;
-    let ytPollTimer  = null;
-
-    // ── Notification settings ──
-    const notifDefaults = { announced: false, oneHourBefore: false, liveNow: false };
-    let notifSettings = JSON.parse(
-      localStorage.getItem('streamNotifSettings') || JSON.stringify(notifDefaults)
-    );
-    let lastAnnouncedStreamTime  = localStorage.getItem('lastAnnouncedStreamTime')  || null;
-    let lastOneHourStreamTime    = localStorage.getItem('lastOneHourStreamTime')    || null;
-    let lastLiveNotifVideoId     = localStorage.getItem('lastLiveNotifVideoId')     || null;
-
-    // ── Timezone ──
-    const TIMEZONES = [
-      'Europe/Berlin', 'Europe/London', 'Europe/Paris',
-      'America/New_York', 'America/Los_Angeles', 'America/Toronto',
-      'Asia/Tokyo', 'Asia/Shanghai', 'Asia/Hong_Kong',
-      'Australia/Sydney', 'Australia/Melbourne'
-    ];
-    let userTimezone = localStorage.getItem('userTimezone')
-      || Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-    // ── Last known stream time (for empty state "Last stream:") ──
-    let lastStreamTime = localStorage.getItem('lastStreamTime') || null;
-
-    // ============================================================
-    // FETCH CONFIG
-    // ============================================================
-
-    async function loadConfig() {
-      for (const url of CONFIG_URLS) {
-        try {
-          const res = await fetch(url, { cache: 'no-store' });
-          if (!res.ok) continue;
-          config = await res.json();
-          onConfigLoaded();
-          return;
-        } catch (e) { continue; }
-      }
-      console.error('All config URLs failed');
-      renderState('empty');
-    }
-
-    function onConfigLoaded() {
-      if (config.nextStreamTime) {
-        lastStreamTime = config.nextStreamTime;
-        localStorage.setItem('lastStreamTime', config.nextStreamTime);
-      }
-      manageYouTubePolling();
-      updateDisplay();
-    }
-
-    // ============================================================
-    // YOUTUBE LIVE DETECTION
-    // ============================================================
-
-    function getChannelId() {
-      const m = (config.streamLink || '').match(/youtube\.com\/channel\/([A-Za-z0-9_-]+)/);
-      return m ? m[1] : null;
-    }
-
-    async function searchForLive() {
-      const channelId = getChannelId();
-      if (!channelId || !YT_API_KEY) return;
-      try {
-        const url = `https://www.googleapis.com/youtube/v3/search`
-          + `?part=id&channelId=${channelId}&eventType=live&type=video&key=${YT_API_KEY}`;
-        const res = await fetch(url, { cache: 'no-store' });
-        if (!res.ok) return;
-        const data = await res.json();
-
-        if (data.items && data.items.length > 0) {
-          const videoId = data.items[0].id.videoId;
-          if (videoId && videoId !== liveVideoId) {
-            liveVideoId = videoId;
-            onStreamWentLive(videoId);
-          }
-        } else if (liveVideoId) {
-          // Was live but now no results — confirm with videos.list before clearing
-        }
-      } catch (e) { console.error('YT search error:', e); }
-    }
-
-    async function pollLiveStatus() {
-      if (!liveVideoId || !YT_API_KEY) return;
-      try {
-        const url = `https://www.googleapis.com/youtube/v3/videos`
-          + `?part=liveStreamingDetails&id=${liveVideoId}&key=${YT_API_KEY}`;
-        const res = await fetch(url, { cache: 'no-store' });
-        if (!res.ok) return;
-        const data = await res.json();
-
-        if (!data.items || data.items.length === 0) {
-          onStreamEnded(); return;
-        }
-        const details = data.items[0].liveStreamingDetails;
-        if (details && details.actualEndTime) {
-          onStreamEnded();
-        }
-      } catch (e) { console.error('YT poll error:', e); }
-    }
-
-    function onStreamWentLive(videoId) {
-      // Switch from expensive search to cheap poll
-      clearInterval(ytSearchTimer); ytSearchTimer = null;
-      clearInterval(ytPollTimer);
-      ytPollTimer = setInterval(pollLiveStatus, 30000);
-
-      renderState('live');
-
-      // Fire live notification once per video
-      if (notifSettings.liveNow
-          && 'Notification' in window
-          && Notification.permission === 'granted'
-          && lastLiveNotifVideoId !== videoId) {
-        new Notification('Stream is Live Now!', {
-          body: config.topic || 'Glnnk is live — join the stream!'
-        });
-        lastLiveNotifVideoId = videoId;
-        localStorage.setItem('lastLiveNotifVideoId', videoId);
-      }
-    }
-
-    function onStreamEnded() {
-      liveVideoId = null;
-      clearInterval(ytPollTimer); ytPollTimer = null;
-      config.isLive = false;
-      config.nextStreamTime = null;
-      config.topic = '';
-      renderState('empty');
-    }
-
-    function manageYouTubePolling() {
-      if (!YT_API_KEY || liveVideoId) return; // already in poll mode
-
-      const now = new Date();
-      const streamTime = config.nextStreamTime ? new Date(config.nextStreamTime) : null;
-      const diffMs = streamTime ? (streamTime - now) : null;
-
-      // Near stream time: ±1 hour → check every 3 min (100 units × 40 calls = 4,000 units/window)
-      // No stream scheduled: check every 15 min (100 units × 96 calls = 9,600 units/day)
-      const inWindow = diffMs !== null && Math.abs(diffMs) < 60 * 60 * 1000;
-      const interval = inWindow ? 3 * 60 * 1000 : 15 * 60 * 1000;
-
-      if (ytSearchTimer) { clearInterval(ytSearchTimer); ytSearchTimer = null; }
-      ytSearchTimer = setInterval(searchForLive, interval);
-      searchForLive(); // immediate check
-    }
-
-    // ============================================================
-    // DISPLAY
-    // ============================================================
-
-    function updateDisplay() {
-      // YouTube API takes precedence
-      if (liveVideoId) { renderState('live'); return; }
-
-      const now = new Date();
-      const streamTime = config.nextStreamTime ? new Date(config.nextStreamTime) : null;
-
-      // Manual isLive fallback (no API key or API not yet triggered)
-      if (config.isLive && config.liveUntil) {
-        if (now < new Date(config.liveUntil)) { renderState('live'); return; }
-        else { config.isLive = false; }
-      }
-
-      if (!streamTime) { renderState('empty'); return; }
-
-      // Countdown (positive or negative — no auto-live transition, API handles that)
-      renderState('countdown');
-    }
-
-    function renderState(state) {
-      const timerEl   = document.getElementById('countdown-value');
-      const labelEl   = document.getElementById('countdown-label');
-      const metaEl    = document.getElementById('stream-meta');
-      const prefixEl  = document.getElementById('datetime-prefix');
-      const dtEl      = document.getElementById('stream-datetime');
-      const watchBtn  = document.getElementById('watch-btn');
-
-      watchBtn.href = config.streamLink;
-
-      if (state === 'empty') {
-        metaEl.innerHTML = '&nbsp;';
-        timerEl.textContent = 'No planned stream';
-        timerEl.className = 'countdown-time is-empty';
-        labelEl.textContent = 'until start';
-        labelEl.className = 'countdown-label invisible';
-
-        if (lastStreamTime) {
-          prefixEl.textContent = 'Last stream:';
-          dtEl.textContent = ' ' + formatTime(new Date(lastStreamTime));
-        } else {
-          prefixEl.textContent = '';
-          dtEl.textContent = '';
-        }
-        watchBtn.textContent = 'Visit Channel';
-
-      } else if (state === 'countdown') {
-        const streamTime = new Date(config.nextStreamTime);
-        const now = new Date();
-        const diff = streamTime - now;
-
-        // Meta
-        setMeta(metaEl, 'Next Stream:', config.topic);
-
-        // Timer (updated every second by interval)
-        timerEl.className = 'countdown-time';
-        updateTimer(streamTime);
-
-        // Label
-        labelEl.className = 'countdown-label';
-        labelEl.textContent = diff < 0 ? 'waiting for stream' : 'until start';
-
-        // Datetime
-        prefixEl.textContent = '';
-        dtEl.textContent = formatTime(streamTime);
-
-        watchBtn.textContent = 'Watch Stream';
-
-      } else if (state === 'live') {
-        // Meta: topic only, accent, no label
-        if (config.topic) {
-          metaEl.textContent = '';
-          const span = document.createElement('span');
-          span.className = 'stream-meta-topic';
-          span.textContent = config.topic;
-          metaEl.appendChild(span);
-        } else {
-          metaEl.innerHTML = '&nbsp;';
-        }
-
-        timerEl.textContent = 'Streaming Now';
-        timerEl.className = 'countdown-time is-live';
-        labelEl.textContent = 'until start';
-        labelEl.className = 'countdown-label invisible';
-
-        // Datetime
-        prefixEl.textContent = '';
-        dtEl.textContent = config.nextStreamTime ? formatTime(new Date(config.nextStreamTime)) : '';
-
-        watchBtn.textContent = 'Watch Stream';
-      }
-    }
-
-    function setMeta(el, label, topic) {
-      el.textContent = '';
-      const labelSpan = document.createTextNode(label);
-      el.appendChild(labelSpan);
-      if (topic) {
-        el.appendChild(document.createTextNode(' '));
-        const topicSpan = document.createElement('span');
-        topicSpan.className = 'stream-meta-topic';
-        topicSpan.textContent = topic;
-        el.appendChild(topicSpan);
-      }
-    }
-
-    function updateTimer(streamTime) {
-      const timerEl = document.getElementById('countdown-value');
-      const labelEl = document.getElementById('countdown-label');
-      if (!timerEl || timerEl.className !== 'countdown-time') return;
-
-      const diff = streamTime - new Date();
-      const abs  = Math.abs(diff);
-      const h = Math.floor(abs / 3600000);
-      const m = Math.floor((abs % 3600000) / 60000);
-      const s = Math.floor((abs % 60000) / 1000);
-      const sign = diff < 0 ? '-' : '';
-
-      timerEl.textContent =
-        `${sign}${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-
-      if (diff < 0) {
-        labelEl.textContent = 'waiting for stream';
-      } else {
-        labelEl.textContent = 'until start';
-      }
-    }
-
-    function formatTime(date) {
-      return new Intl.DateTimeFormat(navigator.language, {
-        timeZone: userTimezone,
-        weekday: 'long', year: 'numeric', month: 'long',
-        day: 'numeric', hour: '2-digit', minute: '2-digit'
-      }).format(date);
-    }
-
-    // ============================================================
-    // TIMEZONE SELECTOR
-    // ============================================================
-
-    function initTimezone() {
-      const list = document.getElementById('timezone-list');
-      TIMEZONES.forEach(tz => {
-        const btn = document.createElement('button');
-        btn.className = 'timezone-btn' + (tz === userTimezone ? ' active' : '');
-        btn.textContent = tz;
-        btn.onclick = () => {
-          userTimezone = tz;
-          localStorage.setItem('userTimezone', tz);
-          list.querySelectorAll('.timezone-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          loadConfig();
-          document.getElementById('timezone-display').textContent = tz;
-        };
-        list.appendChild(btn);
-      });
-
-      document.getElementById('timezone-edit-btn').onclick = () =>
-        document.getElementById('timezone-modal').classList.add('active');
-
-      document.getElementById('timezone-modal').onclick = e => {
-        if (e.target.id === 'timezone-modal')
-          e.target.classList.remove('active');
-      };
-
-      document.getElementById('timezone-display').textContent = userTimezone;
-    }
-
-    // ============================================================
-    // NOTIFICATIONS
-    // ============================================================
-
-    function initNotifications() {
-      const btn      = document.getElementById('notif-btn');
-      const announced = document.getElementById('notif-announced');
-      const oneHour  = document.getElementById('notif-1hour');
-      const live     = document.getElementById('notif-live');
-
-      announced.checked = notifSettings.announced;
-      oneHour.checked   = notifSettings.oneHourBefore;
-      live.checked      = notifSettings.liveNow;
-
-      const persist = () => {
-        localStorage.setItem('streamNotifSettings', JSON.stringify(notifSettings));
-        updateNotifUI();
-      };
-
-      announced.onchange = () => { notifSettings.announced      = announced.checked; persist(); };
-      oneHour.onchange   = () => { notifSettings.oneHourBefore  = oneHour.checked;   persist(); };
-      live.onchange      = () => { notifSettings.liveNow        = live.checked;       persist(); };
-
-      // Click the button = enable all + request permission, but only if all are off
-      btn.onclick = () => {
-        const anyOn = Object.values(notifSettings).some(Boolean);
-        if (anyOn) return; // some are manually set — do nothing, let dropdown handle it
-        notifSettings.announced     = true;
-        notifSettings.oneHourBefore = true;
-        notifSettings.liveNow       = true;
-        announced.checked = oneHour.checked = live.checked = true;
-        if ('Notification' in window && Notification.permission !== 'granted') {
-          Notification.requestPermission().then(() => persist());
-        } else {
-          persist();
-        }
-      };
-
-      document.getElementById('notif-disable-all').onclick = e => {
-        e.stopPropagation();
-        notifSettings.announced = notifSettings.oneHourBefore = notifSettings.liveNow = false;
-        announced.checked = oneHour.checked = live.checked = false;
-        persist();
-      };
-
-      updateNotifUI();
-    }
-
-    function updateNotifUI() {
-      const btn      = document.getElementById('notif-btn');
-      const label    = document.getElementById('notif-btn-label');
-      const disableBtn = document.getElementById('notif-disable-all');
-      const anyOn    = Object.values(notifSettings).some(Boolean);
-
-      disableBtn.disabled = !anyOn;
-
-      const granted = 'Notification' in window && Notification.permission === 'granted';
-      const denied  = 'Notification' in window && Notification.permission === 'denied';
-
-      if (anyOn && granted) {
-        btn.classList.add('enabled');
-        label.textContent = '🔔 Notifications Enabled';
-      } else if (denied) {
-        btn.classList.remove('enabled');
-        label.textContent = '🔔 Notifications Blocked';
-      } else {
-        btn.classList.remove('enabled');
-        label.textContent = '🔔 Enable Notifications';
-      }
-    }
-
-    function checkAndNotify() {
-      if (!('Notification' in window) || Notification.permission !== 'granted') return;
-
-      const streamTime = config.nextStreamTime ? new Date(config.nextStreamTime) : null;
-      const diff = streamTime ? (streamTime - new Date()) : null;
-
-      // Stream announced — once per nextStreamTime
-      if (notifSettings.announced && streamTime
-          && lastAnnouncedStreamTime !== config.nextStreamTime) {
-        new Notification('New Stream Announced!', {
-          body: config.topic ? `"${config.topic}" coming up` : 'Stream coming up'
-        });
-        lastAnnouncedStreamTime = config.nextStreamTime;
-        localStorage.setItem('lastAnnouncedStreamTime', config.nextStreamTime);
-      }
-
-      // 1 hour before — once per nextStreamTime
-      if (notifSettings.oneHourBefore && diff !== null
-          && diff > 0 && diff <= 3600000
-          && lastOneHourStreamTime !== config.nextStreamTime) {
-        new Notification('Stream Starting Soon!', {
-          body: 'Starts in 1 hour'
-        });
-        lastOneHourStreamTime = config.nextStreamTime;
-        localStorage.setItem('lastOneHourStreamTime', config.nextStreamTime);
-      }
-
-      // Live notification is fired by onStreamWentLive(), not here
-    }
-
-    // ============================================================
-    // INIT
-    // ============================================================
-
-    document.addEventListener('DOMContentLoaded', () => {
-      initTimezone();
-      initNotifications();
-      loadConfig();
-
-      // Reload config every 10s
-      setInterval(loadConfig, 10000);
-
-      // Tick countdown every second
-      setInterval(() => {
-        if (config.nextStreamTime && !liveVideoId && !config.isLive) {
-          updateTimer(new Date(config.nextStreamTime));
-        }
-      }, 1000);
-
-      // Check notifications every 15s
-      setInterval(checkAndNotify, 15000);
+    ${upcomingHTML}
+  `;
+
+  startCountdown(next.scheduledStart);
+
+  // Wire accordion
+  const toggle = document.getElementById('upcoming-toggle');
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      accordionOpen = !accordionOpen;
+      toggle.classList.toggle('open', accordionOpen);
+      document.getElementById('upcoming-list').classList.toggle('visible', accordionOpen);
     });
-  </script>
+  }
+}
+
+// ── STATE D: LIVE ─────────────────────────────────────────────────────────
+function renderLive(stream) {
+  clearCountdown();
+
+  const elapsed  = Date.now() - new Date(stream.actualStart).getTime();
+  const minutes  = Math.floor(elapsed / 60000);
+  const elapsedStr = minutes < 2
+    ? 'just started'
+    : minutes < 60
+      ? `started ${minutes} minutes ago`
+      : `started ${Math.floor(minutes / 60)}h ${minutes % 60}m ago`;
+
+  document.getElementById('content').innerHTML = `
+    <div class="live-badge">
+      <span class="dot dot-live"></span>
+      Live now
+    </div>
+    <div class="stream-title">${escHtml(stream.title)}</div>
+    <div class="live-sub">${elapsedStr}</div>
+    <div class="btn-row">
+      <a href="${stream.url}" target="_blank" rel="noopener" class="btn btn-green">
+        ▶ Watch on YouTube
+      </a>
+      <a href="${DISCORD}" target="_blank" rel="noopener" class="btn btn-discord">
+        ⬡ Discuss on Discord
+      </a>
+    </div>
+  `;
+}
+
+// ── COUNTDOWN TIMER ───────────────────────────────────────────────────────
+function startCountdown(isoTime) {
+  const target = new Date(isoTime).getTime();
+
+  function tick() {
+    const diff = target - Date.now();
+    const el   = document.getElementById('countdown');
+    if (!el) return;
+
+    if (diff <= 0) {
+      el.textContent = '00:00:00';
+      clearCountdown();
+      // Refetch — stream might be going live
+      setTimeout(fetchAndRender, 5000);
+      return;
+    }
+
+    const totalSec = Math.floor(diff / 1000);
+    const hours    = Math.floor(totalSec / 3600);
+    const minutes  = Math.floor((totalSec % 3600) / 60);
+    const seconds  = totalSec % 60;
+
+    // Hours: no leading zero. Minutes+seconds: always two digits.
+    el.textContent =
+      `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  }
+
+  tick();
+  countdownInterval = setInterval(tick, 1000);
+}
+
+function clearCountdown() {
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+    countdownInterval = null;
+  }
+}
+
+// ── DATE FORMATTING ───────────────────────────────────────────────────────
+function formatDate(isoTime) {
+  return new Date(isoTime).toLocaleString(navigator.language, {
+    weekday: 'short',
+    day:     'numeric',
+    month:   'long',
+    year:    'numeric',
+    hour:    '2-digit',
+    minute:  '2-digit',
+    timeZoneName: 'short',
+  });
+}
+
+function formatDateShort(isoTime) {
+  return new Date(isoTime).toLocaleString(navigator.language, {
+    weekday: 'short',
+    day:     'numeric',
+    month:   'short',
+    hour:    '2-digit',
+    minute:  '2-digit',
+  });
+}
+
+function escHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+</script>
 </body>
 </html>
