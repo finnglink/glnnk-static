@@ -20,15 +20,22 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html {
+      overflow-x: hidden;
+      width: 100%;
+    }
+
     body {
       background: var(--bg);
       color: var(--text);
       font-family: var(--font);
       min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 2rem;
+      width: 100%;
       overflow-x: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 1.25rem;
     }
 
     /* Subtle scanline texture */
@@ -52,6 +59,7 @@
       z-index: 1;
       max-width: 560px;
       width: 100%;
+      min-width: 0;
     }
 
     /* ── Header ── */
@@ -111,6 +119,8 @@
       animation: fadeUp 0.45s ease both;
       position: relative;
       overflow: hidden;
+      width: 100%;
+      min-width: 0;
     }
 
     .link-card::before {
@@ -173,9 +183,10 @@
       font-size: 0.7rem;
       color: var(--muted);
       font-weight: 300;
-      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: normal;
+      word-break: break-word;
     }
 
     .card-url {
@@ -235,6 +246,12 @@
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(12px); }
       to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 400px) {
+      .headline { font-size: 1.5rem; }
+      .subline { font-size: 0.72rem; }
+      .card-url { display: none; }
     }
   </style>
 </head>
